@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Be My Valentine? 💖</title>
+    
+    <!-- Open Graph for sharing -->
+    <meta property="og:title" content="A Special Question For You... 💌✨💖">
+    <meta property="og:description" content="Click to see my Valentine's proposal! 💞">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%22.9em%22%20font-size%3D%2290%22%3E%F0%9F%92%96%3C/text%3E%3C/svg%3E">
+
+    <!-- Fonts: Premium Luxury Selection -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Cinzel:wght@400;700;900&family=Montserrat:wght@300;400;700&family=Great+Vibes&display=swap" rel="stylesheet">
+    
+    <!-- Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        :root {
+            /* Luxury Rose Gold & Deep Plum Palette */
+            --rose-gold: #e2b49a;
+            --rose-gold-light: #f7e7ce;
+            --luxury-gold: #d4af37;
+            --deep-plum: #4a154b;
+            --silk-white: #fffcf9;
+            --glass-bg: rgba(255, 252, 249, 0.4);
+            --bg-gradient: radial-gradient(circle at center, #6b2d5c 0%, #4a154b 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            /* Precise Yellow Heart Cursor */
+            cursor: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2032%2032%22%3E%3Cpath%20fill%3D%22%23ffff00%22%20stroke%3D%22black%22%20stroke-width%3D%221.5%22%20d%3D%22M16%2028.5l-2.1-1.9C6.4%2019.6%201.5%2015.2%201.5%209.8A7.8%207.8%200%200%201%209.3%202c3.2%200%206.2%202%207.2%205.5A7.8%207.8%200%200%201%2023.7%202a7.8%207.8%200%200%201%207.8%207.8c0%205.4-4.9%209.8-12.4%2016.8L16%2028.5z%22/%3E%3C/svg%3E") 10 10, auto;
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden !important; 
+            touch-action: manipulation;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 300;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--bg-gradient);
+            position: relative;
+            color: var(--silk-white);
+            
+            /* High-End Decorative Border */
+            border: 20px solid transparent;
+            border-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160' %3E%3Cpath d='M40,40 Q80,0 120,40 Q160,80 120,120 Q80,160 40,120 Q0,80 40,40' fill='%23d4af37' fill-opacity='0.1'/%3E%3Cpath d='M20,20 L140,140 M140,20 L20,140' stroke='%23e2b49a' stroke-width='0.5' stroke-opacity='0.4'/%3E%3Ccircle cx='80' cy='80' r='3' fill='%23d4af37'/%3E%3C/svg%3E") 60 round;
+        }
+
+        @media (max-width: 768px) {
+            body { border: none; }
+        }
+
+        /* Floating Galaxy Background */
+        #galaxy {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .floating-heart {
+            position: absolute;
+            color: rgba(255, 77, 109, 0.3);
+            font-size: 20px;
+            animation: floatUp 15s linear infinite;
+        }
+
+        @keyframes floatUp {
+            from { transform: translateY(110vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.8; }
+            to { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+        }
+        
+        /* Immersive Content - No Containers! */
+        .immersive-view {
+            text-align: center;
+            z-index: 10;
+            position: relative;
+            max-width: 900px;
+            padding: 2rem;
+            width: 100%;
+        }
+
+        .main-image {
+            width: clamp(140px, 30vw, 180px);
+            height: clamp(140px, 30vw, 180px);
+            margin: 0 auto 2rem auto;
+            filter: drop-shadow(0 20px 40px rgba(0,0,0,0.15));
+        }
+
+        /* Start Entrance - Minimalist & Luxury */
+        #startOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-gradient);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            transition: opacity 1s ease, visibility 1s;
+            display: none; /* Controlled by JS */
+            padding: 20px;
+        }
+
+        .btn-surprise {
+            background: linear-gradient(135deg, #d4af37 0%, #e2b49a 100%);
+            color: #4a154b;
+            padding: clamp(15px, 3vh, 25px) clamp(30px, 6vw, 60px);
+            font-size: clamp(1.2rem, 4vh, 2.5rem);
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 15px 45px rgba(212, 175, 55, 0.4);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: pumpingHeart 1.5s infinite cubic-bezier(0.4, 0, 0.2, 1);
+            margin-top: 30px;
+            white-space: nowrap;
+        }
+
+        .btn-surprise:hover {
+            transform: scale(1.1) translateY(-5px);
+            box-shadow: 0 20px 60px rgba(212, 175, 55, 0.6);
+            background: linear-gradient(135deg, #e2b49a 0%, #d4af37 100%);
+        }
+
+        h1 {
+            font-family: 'Great Vibes', cursive; /* Elegant Cursive for Proposal */
+            font-weight: 400;
+            font-size: clamp(2.5rem, 9vw, 5rem); /* Responsive fluid font */
+            color: var(--rose-gold-light);
+            margin-bottom: 2vh;
+            text-shadow: 0 5px 25px rgba(212, 175, 55, 0.4);
+            line-height: 1.1;
+            padding: 0 10px;
+        }
+
+        .subtitle {
+            font-family: 'Montserrat', sans-serif;
+            font-size: clamp(1rem, 4vw, 1.25rem);
+            font-weight: 400;
+            color: var(--rose-gold);
+            margin-bottom: 2.5rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 0 15px;
+        }
+
+        /* Jumbo Buttons */
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+
+        .btn {
+            font-family: 'Montserrat', sans-serif;
+            font-size: clamp(1rem, 4vw, 1.5rem);
+            font-weight: 700;
+            padding: clamp(15px, 2vh, 20px) clamp(30px, 5vw, 50px);
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            display: inline-block !important; 
+            opacity: 1 !important; 
+            visibility: visible !important; 
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            white-space: nowrap;
+        }
+
+        .btn-yes {
+            background: linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%);
+            color: #1b5e20;
+            box-shadow: 0 15px 35px rgba(76, 175, 80, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            z-index: 1005;
+        }
+
+        .btn-yes:hover, .btn-yes:active {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 20px 45px rgba(76, 175, 80, 0.4);
+            background: linear-gradient(135deg, #a5d6a7 0%, #c8e6c9 100%);
+        }
+
+        .btn-no {
+            background: rgba(255, 205, 210, 0.3); /* Soft Petal Red */
+            color: #e3d7d7; /* Soft Harmony Red - More Elegant */
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(183, 28, 28, 0.2);
+            touch-action: none;
+        }
+
+        /* Success Experience - The Royal Letter */
+        #successState {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent !important;
+            z-index: 1000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            overflow: hidden; /* Zero Scroll Requirement */
+            padding: 2vh;
+            border: none;
+        }
+
+        .success-content {
+            position: relative;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%; /* Fill viewport for centering */
+            max-width: 1200px;
+        }
+
+        #sparkleZone {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .parchment-container {
+            background: #fffcf9; /* Silk White Vellum */
+            width: clamp(300px, 90%, 1100px);
+            height: auto;
+            max-height: 80vh;
+            padding: clamp(1.5rem, 4vh, 4rem);
+            border-radius: 15px; /* Softer luxury corners */
+            position: relative;
+            box-shadow: 0 40px 120px rgba(0,0,0,0.5), 0 0 40px rgba(212, 175, 55, 0.1);
+            transform: scale(0.9);
+            opacity: 0;
+            transition: all 1.2s cubic-bezier(0.23, 1, 0.32, 1);
+            border: 3px solid var(--luxury-gold); /* Solid Luxury Border */
+            outline: 1px solid rgba(212, 175, 55, 0.5); /* Shimmering Double Border */
+            outline-offset: -12px;
+            overflow-y: auto; 
+            display: flex;
+            flex-direction: column;
+        }
+        
+        @media (max-width: 480px) {
+            .parchment-container {
+                outline-offset: -6px;
+                padding: 1.5rem;
+            }
+            .parchment-container::after {
+                padding: 10px !important; 
+                background-size: 60px 15px, 60px 15px, 15px 60px, 15px 60px !important;
+            }
+        }
+
+        /* Custom scrollbar logic removed from box, global scroll on parent remains */
+        .parchment-container.visible { transform: scale(1); opacity: 1; }
+
+        /* High-End Decorative Corner Ornaments */
+        .parch-dec {
+            position: absolute;
+            width: clamp(40px, 12vw, 80px);
+            height: clamp(40px, 12vw, 80px);
+            pointer-events: none;
+            z-index: 10;
+            opacity: 0.9;
+            background-repeat: no-repeat;
+            background-size: contain;
+            /* Extra Ornate SVG Corner Pattern */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M10,10 Q50,0 90,10 Q100,50 90,90 Q50,100 10,90 Q0,50 10,10' fill='none' stroke='%23d4af37' stroke-width='2'/%3E%3Cpath d='M25,25 Q50,15 75,25 Q85,50 75,75 Q50,85 25,75 Q15,50 25,25' fill='none' stroke='%23d4af37' stroke-width='1' opacity='0.7'/%3E%3Cpath d='M10,10 C30,10 40,20 40,40 M90,10 C70,10 60,20 60,40 M10,90 C30,90 40,80 40,60 M90,90 C70,90 60,80 60,60' fill='none' stroke='%23d4af37' stroke-width='1.5'/%3E%3Cpath d='M40,40 Q50,30 60,40 Q70,50 60,60 Q50,70 40,60 Q30,50 40,40' fill='%23d4af37' opacity='0.4'/%3E%3Ccircle cx='50' cy='50' r='6' fill='none' stroke='%23d4af37' stroke-width='1.5'/%3E%3Cpath d='M50,44 L50,56 M44,50 L56,50' stroke='%23d4af37' stroke-width='1'/%3E%3C/svg%3E");
+            filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.4));
+        }
+        .dec-tl { top: -5px; left: -5px; }
+        .dec-tr { top: -5px; right: -5px; transform: rotate(90deg); }
+        .dec-bl { bottom: -5px; left: -5px; transform: rotate(-90deg); }
+        .dec-br { bottom: -5px; right: -5px; transform: rotate(180deg); }
+
+        .parchment-container::before {
+            content: '';
+            position: absolute;
+            top: 25px;
+            left: 25px;
+            right: 25px;
+            bottom: 25px;
+            border: 2px solid #d4af37;
+            opacity: 0.5;
+            pointer-events: none;
+            z-index: 2;
+            box-shadow: inset 0 0 15px rgba(212, 175, 55, 0.1);
+        }
+
+        /* Enhanced Border Artistry (Scrollwork & Floral Gap) */
+        .parchment-container::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 1;
+            padding: 25px;
+            
+            /* Multi-layered Ornate Backgrounds */
+            background: 
+                /* Top Edge: Ornate Scroll & Heart */
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='25' viewBox='0 0 100 25'%3E%3Cpath d='M0,20 C10,0 20,25 30,5 C40,25 50,0 60,20 C70,0 80,25 90,5 C100,25 110,0 120,20' fill='none' stroke='%23d4af37' stroke-width='0.8' opacity='0.6'/%3E%3Cpath d='M50,12 Q50,5 55,8 Q50,12 45,8 Q50,5 50,12' fill='%23d4af37' opacity='0.8'/%3E%3C/svg%3E") repeat-x top center,
+                /* Bottom Edge: Inverse Ornate Scroll */
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='25' viewBox='0 0 100 25'%3E%3Cpath d='M0,5 C10,25 20,0 30,20 C40,0 50,25 60,5 C70,25 80,0 90,20 C100,0 110,25 120,5' fill='none' stroke='%23d4af37' stroke-width='0.8' opacity='0.6'/%3E%3Cpath d='M50,13 Q50,20 55,17 Q50,13 45,17 Q50,20 50,13' fill='%23d4af37' opacity='0.8'/%3E%3C/svg%3E") repeat-x bottom center,
+                /* Left Edge: Vertical Vine */
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='25' height='100' viewBox='0 0 25 100'%3E%3Cpath d='M20,0 Q0,25 20,50 Q0,75 20,100' fill='none' stroke='%23d4af37' stroke-width='0.8' opacity='0.6'/%3E%3Ccircle cx='12' cy='50' r='2' fill='%23d4af37' opacity='0.7'/%3E%3C/svg%3E") repeat-y left center,
+                /* Right Edge: Vertical Inverse Vine */
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='25' height='100' viewBox='0 0 25 100'%3E%3Cpath d='M5,0 Q25,25 5,50 Q25,75 5,100' fill='none' stroke='%23d4af37' stroke-width='0.8' opacity='0.6'/%3E%3Ccircle cx='13' cy='50' r='2' fill='%23d4af37' opacity='0.7'/%3E%3C/svg%3E") repeat-y right center;
+            
+            background-size: 100px 25px, 100px 25px, 25px 100px, 25px 100px;
+        }
+
+        .wax-seal {
+            position: absolute;
+            bottom: 20px; /* Moved inside to avoid clipping */
+            right: 30px;
+            width: clamp(50px, 15vw, 80px);
+            height: clamp(50px, 15vw, 80px);
+            background: #d4af37; /* Luxury Gold/Yellow Seal */
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.4);
+            transform: rotate(-10deg);
+        }
+
+        .wax-seal::after {
+            content: '❤️';
+            font-size: clamp(1.5rem, 5vw, 2.2rem); 
+            color: rgba(255,255,255,0.9);
+            animation: pumpingHeart 1.2s infinite cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-block;
+        }
+
+        @keyframes pumpingHeart {
+            0% { transform: scale(1); }
+            15% { transform: scale(1.25); }
+            30% { transform: scale(1.05); }
+            45% { transform: scale(1.35); }
+            100% { transform: scale(1); }
+        }
+
+        .letter-content {
+            font-family: 'Great Vibes', cursive;
+            font-size: clamp(1.1rem, 4vw, 2rem); /* Fluid typography */
+            color: #4a342e;
+            line-height: 1.3;
+            text-align: left;
+            overflow: visible;
+            padding-bottom: 20px;
+        }
+        
+        #typewriter {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Preloader & Overlay */
+        #preloader, .overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 10000;
+            /* Preloader & Overlay: Luxury Silk & Plum */
+        }
+        #preloader { 
+            background: #2a0a2b; /* Darker Plum for entrance */
+        }
+        
+        .overlay { 
+            display: none; 
+        }
+
+        #startOverlay h2 {
+            font-family: 'Cinzel', serif;
+            letter-spacing: 4px;
+            color: var(--rose-gold-light);
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+            padding: 0 20px;
+        }
+
+        .victory-title {
+            font-family: 'Great Vibes', cursive;
+            font-weight: 400;
+            font-size: clamp(1.5rem, 6vw, 4rem); /* Responsive Font */
+            letter-spacing: normal;
+            text-transform: none;
+            margin-bottom: 2vh; /* Responsive margin */
+            background: linear-gradient(to bottom, #d4af37 0%, #f7e7ce 50%, #e2b49a 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3)) drop-shadow(0 0 30px rgba(212, 175, 55, 0.4));
+            animation: victoryFloat 5s ease-in-out infinite;
+            display: inline-block;
+            position: relative;
+            line-height: 1.1;
+            padding: 0 10px;
+            text-align: center;
+        }
+
+        .victory-title::after {
+            content: '“And just like that… our forever begins.”';
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.2);
+            filter: blur(2px);
+        }
+
+        @keyframes victoryFloat {
+            0%, 100% { transform: translateY(0) scale(1.0); }
+            50% { transform: translateY(-20px) scale(1.05); }
+        }
+
+        .real-sparkle {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 10px white, 0 0 20px var(--gold);
+            animation: shimmer 2s infinite ease-in-out;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { transform: scale(0.5); opacity: 0.3; }
+            50% { transform: scale(1.2); opacity: 1; box-shadow: 0 0 15px white, 0 0 25px var(--gold); }
+        }
+
+        /* Music Toggle Button */
+        #musicToggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: rgba(212, 175, 55, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--luxury-gold);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 10000;
+            color: var(--luxury-gold);
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        #musicToggle:hover {
+            transform: scale(1.1);
+            background: rgba(212, 175, 55, 0.4);
+        }
+
+        /* Pencil Animation Styles */
+        .pencil-cursor {
+            position: absolute;
+            font-size: 2.5rem;
+            pointer-events: none;
+            z-index: 1002;
+            display: none;
+            transform-origin: bottom left;
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.2));
+            transition: left 0.05s linear, top 0.05s linear;
+        }
+
+        .writing-active {
+            animation: pencilWrite 0.1s infinite alternate ease-in-out;
+        }
+
+        @keyframes pencilWrite {
+            0% { transform: rotate(0deg) translateY(0); }
+            100% { transform: rotate(15deg) translateY(-5px); }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="galaxy"></div>
+
+    <div id="preloader">
+        <div style="font-size: 80px; animation: pumpingHeart 1.2s infinite cubic-bezier(0.4, 0, 0.2, 1);">❤️</div>
+        <p style="font-family: 'Great Vibes'; font-size: 3rem; color: #ff4d6d; margin-top: 20px;">Creating your fairy tale... ✨🌹</p>
+    </div>
+
+    <div id="startOverlay">
+        <h2 style="font-family: 'Great Vibes'; font-size: clamp(3rem, 10vh, 5.5rem); margin-bottom: 20px; text-align: center;">A Royal Invitation... 🏹💌</h2>
+        <button class="btn-surprise" id="startBtn">Surprise 🎁✨</button>
+    </div>
+
+    <div class="immersive-view" id="mainSection">
+        <div class="main-image">
+            <img id="bearImg" src="https://media.tenor.com/syS6m6493_IAAAAi/mocha.gif" style="width: 100%; height: 100%; object-fit: contain;">
+        </div>
+        
+        <!-- Teddy Bears Greeting GIF -->
+        <div style="width: 120px; height: 120px; margin: 0 auto 10px;">
+            <img src="https://media.tenor.com/S5r9g12_a8IAAAAi/milk-and-mocha-bear-couple.gif" style="width: 100%; height: 100%; object-fit: contain;">
+        </div>
+        
+        <h1>Will you be my Valentine? 💍</h1>
+        <p class="subtitle">You make my heart go boom-boom! </p>
+        
+        <div class="btn-group">
+            <button class="btn btn-yes" id="yesBtn">Accept 💖</button>
+            <button class="btn btn-no" id="noBtn">Reject 😢</button>
+        </div>
+    </div>
+
+    <div id="successState">
+        <div id="sparkleZone"></div>
+        <div class="success-content">
+            <h1 class="victory-title">💍 “And just like that… our forever begins.” 💍</h1>
+             <div class="parchment-container" id="parchment">
+                <!-- Ornate Corner Elements -->
+                <div class="parch-dec dec-tl"></div>
+                <div class="parch-dec dec-tr"></div>
+                <div class="parch-dec dec-bl"></div>
+                <div class="parch-dec dec-br"></div>
+                
+                <!-- Success GIF - Milk & Mocha Celebration -->
+                <img src="https://media.tenor.com/S5r9g12_a8IAAAAi/milk-and-mocha-bear-couple.gif" 
+                     style="width: 150px; height: 150px; position: absolute; top: -110px; left: 50%; transform: translateX(-50%); z-index: 1001; filter: drop-shadow(0 0 10px rgba(212,175,55,0.4));">
+                
+                 <div class="letter-content" id="typewriter"></div>
+                <div class="pencil-cursor" id="pencil">🖋️</div>
+                <div class="wax-seal"></div>
+            </div>
+        </div>
+    </div>
+
+    <audio id="bgMusic" loop>
+        <source src="assets/music.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="musicToggle" title="Toggle Music">🎵</div>
+
+    <script>
+        const music = document.getElementById('bgMusic');
+        const galaxy = document.getElementById('galaxy');
+        
+        // Create Floating Galaxy
+        for(let i=0; i<40; i++) {
+            const h = document.createElement('div');
+            h.innerHTML = Math.random() > 0.5 ? '💞' : '💝';
+            h.className = 'floating-heart';
+            h.style.left = Math.random() * 100 + 'vw';
+            h.style.animationDuration = Math.random() * 8 + 7 + 's';
+            h.style.fontSize = Math.random() * 20 + 10 + 'px';
+            h.style.animationDelay = Math.random() * 10 + 's';
+            galaxy.appendChild(h);
+        }
+
+        // Preloader Logic
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('preloader').style.display = 'none';
+                document.getElementById('startOverlay').style.display = 'flex';
+            }, 2000);
+        });
+
+        // Audio Unlock
+        document.getElementById('startBtn').addEventListener('click', () => {
+            music.play().then(() => music.pause()); 
+            document.getElementById('startOverlay').style.display = 'none';
+            gsap.from("#mainSection > *", { duration: 1.5, y: 100, opacity: 0, stagger: 0.3, ease: "power4.out" });
+        });
+
+        const noBtn = document.getElementById('noBtn');
+        const yesBtn = document.getElementById('yesBtn');
+        const rejectionStages = ["Sure? 🥺", "Really? 🧐", "Wait! 😭", "Please! 🙏", "Cookies? 🍪", "Stars! ✨", "Crying... 😢", "Mean! 😠", "Final? 🔍", "YES! 😍"];
+        let stage = 0;
+
+        function moveNo(e) {
+            // Prevent default touch behavior (double-tap zoom, etc.) but allow scrolling elsewhere
+            if(e && e.type === 'touchstart') {
+                e.preventDefault(); 
+            }
+
+            // Relocate to body to escape any parent transforms that break fixed positioning
+            if (noBtn.parentElement !== document.body) {
+                document.body.appendChild(noBtn);
+            }
+
+            // Update text first for size measurement
+            noBtn.innerText = rejectionStages[stage % rejectionStages.length];
+            
+            // Safe bounds with margin to account for overshoot transitions
+            const margin = Math.min(20, window.innerWidth * 0.05);
+            const btnW = noBtn.offsetWidth || 100;
+            const btnH = noBtn.offsetHeight || 50;
+
+            const maxX = Math.max(margin, window.innerWidth - btnW - margin);
+            const maxY = Math.max(margin, window.innerHeight - btnH - margin);
+            
+            const x = Math.random() * (maxX - margin) + margin;
+            const y = Math.random() * (maxY - margin) + margin;
+            
+            noBtn.style.position = 'fixed';
+            noBtn.style.left = x + 'px';
+            noBtn.style.top = y + 'px';
+            noBtn.style.zIndex = '1000000';
+            noBtn.style.margin = '0';
+            
+            stage++;
+            yesBtn.style.transform = `scale(${1 + stage * 0.05})`;
+        }
+
+        noBtn.addEventListener('mouseover', moveNo);
+        noBtn.addEventListener('click', moveNo);
+        noBtn.addEventListener('touchstart', moveNo, {passive: false});
+
+        yesBtn.addEventListener('click', () => {
+            noBtn.style.display = 'none'; // Ensure dodge button disappears
+            if (noBtn.parentNode) noBtn.parentNode.removeChild(noBtn); // Clean removal
+            
+            document.body.style.border = 'none';
+            document.getElementById('mainSection').style.display = 'none';
+            document.getElementById('successState').style.display = 'flex';
+            
+            // Robust Music Playback
+            music.currentTime = 0;
+            music.volume = 0.6;
+            const playPromise = music.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    console.log("Playback was prevented. Showing music toggle.");
+                    const toggle = document.getElementById('musicToggle');
+                    toggle.style.animation = "pumpingHeart 1.5s infinite";
+                    toggle.style.background = "rgba(212, 175, 55, 0.6)";
+                });
+            }
+            
+            // Victory Title Entrance
+            gsap.from(".victory-title", { duration: 1.5, y: -100, opacity: 0, scale: 0.5, ease: "elastic.out(1, 0.5)" });
+
+            setTimeout(() => {
+                document.getElementById('parchment').classList.add('visible');
+                startTypewriting();
+            }, 800);
+            
+            confetti({
+                particleCount: 300, spread: 100, origin: { y: 0.6 },
+                colors: ['#ff4d6d', '#ffd700', '#ffffff']
+            });
+
+            setInterval(() => {
+                confetti({
+                    particleCount: 40, spread: 70, origin: { x: Math.random(), y: Math.random() - 0.2 },
+                    colors: ['#ff4d6d', '#ffd700'], shapes: ['star']
+                });
+            }, 1000);
+
+            // Create Real Background Sparkles (Behind the Letter)
+            const zone = document.getElementById('sparkleZone');
+            for (let i = 0; i < 200; i++) {
+                const s = document.createElement('div');
+                s.className = 'real-sparkle';
+                const size = Math.random() * 4 + 2;
+                s.style.width = size + 'px';
+                s.style.height = size + 'px';
+                s.style.left = Math.random() * 100 + '%';
+                s.style.top = Math.random() * 100 + '%';
+                s.style.animationDelay = Math.random() * 5 + 's';
+                s.style.opacity = Math.random();
+                zone.appendChild(s);
+            }
+        });
+
+        function startTypewriting() {
+            const text = `My Dearest Love...\n\nFrom the moment you entered my life, every heartbeat found its rhythm and every dream found its destination. You are not just my love; you are my greatest adventure and my quietest peace. ✨\n\nYour smile is my daily sunrise, and your heart is my forever home. In your eyes, I see a thousand lifetimes I want to spend by your side. Every laugh we share is a melody I want to play on repeat forever. 🌹\n\nThank you for choosing me. I promise to cherish every heartbeat, every laugh, and every dream we share from this day forward. Together, we will build a world where love is our only language and happiness is our only law.\n\nYou are my today and all of my tomorrows. 💍\n\nForever Yours, ❤️`;
+            const container = document.getElementById('typewriter');
+            const pencil = document.getElementById('pencil');
+            let i = 0;
+            
+            pencil.style.display = 'block';
+            pencil.classList.add('writing-active');
+
+            function updatePencilPosition() {
+                // Use a temporary span to find the exact coordinates of the last character
+                const tempSpan = document.createElement('span');
+                tempSpan.innerHTML = 'I'; // Measure with a placeholder
+                tempSpan.style.visibility = 'hidden';
+                container.appendChild(tempSpan);
+                
+                const rect = tempSpan.getBoundingClientRect();
+                const containerRect = container.parentElement.getBoundingClientRect();
+                
+                // Position pencil relative to its offset parent, ACCOUNTING FOR SCROLL
+                // Pencil is absolute inside parchment. 
+                // Parchment scrolls. Pencil should move with scroll? No, pencil is absolute inside parchment-container which is flex column?
+                // Wait, pencil is inside parchment-container. if parchment-container scrolls, pencil scrolls with it.
+                // We need pencil to be at the character position.
+                // The character position relative to the container TOPBORDER is:
+                // rect.top - containerRect.top + container.scrollTop
+                
+                const relativeTop = rect.top - containerRect.top + container.scrollTop;
+                const relativeLeft = rect.left - containerRect.left;
+
+                pencil.style.left = (relativeLeft + 5) + 'px';
+                pencil.style.top = (relativeTop - 25) + 'px';
+                
+                container.removeChild(tempSpan);
+            }
+
+            function type() {
+                if (i < text.length) {
+                    const char = text.charAt(i);
+                    if (char === '\n') {
+                        container.innerHTML += '<br>';
+                    } else {
+                        container.innerHTML += char;
+                    }
+                    
+                    updatePencilPosition();
+                    i++;
+                    
+                    // Auto-scroll logic
+                    if (container.scrollHeight > container.clientHeight) {
+                        container.scrollTop = container.scrollHeight;
+                    }
+
+                    setTimeout(type, 50); // Natural typing speed
+                } else {
+                    pencil.classList.remove('writing-active');
+                    gsap.to(pencil, { opacity: 0, duration: 1, delay: 1, onComplete: () => pencil.style.display = 'none' });
+                }
+            }
+            type();
+        }
+
+        // Music Toggle Logic
+        const musicToggle = document.getElementById('musicToggle');
+        musicToggle.addEventListener('click', () => {
+            if (music.paused) {
+                music.play();
+                musicToggle.innerText = '🎵';
+                musicToggle.style.animation = "none";
+            } else {
+                music.pause();
+                musicToggle.innerText = '🔇';
+            }
+        });
+    </script>
+</body>
+</html>

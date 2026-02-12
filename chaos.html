@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Story - An Interactive Love Movie 🎬</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600&family=Great+Vibes&display=swap" rel="stylesheet">
+    
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/TextPlugin.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        :root {
+            --primary: #e50914; /* Netflix Red */
+            --accent: #d4af37; /* Gold */
+            --bg-color: #0a0a0a;
+            --text-color: #f5f5f1;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --paper: #fffcf9;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        /* --- Galaxy Background --- */
+        #galaxy {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .floating-heart {
+            position: absolute;
+            color: rgba(229, 9, 20, 0.2);
+            font-size: 20px;
+            animation: floatUp 15s linear infinite;
+        }
+
+        @keyframes floatUp {
+            from { transform: translateY(110vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.5; }
+            90% { opacity: 0.5; }
+            to { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* --- Screens --- */
+        .screen {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            opacity: 0; visibility: hidden;
+            transition: opacity 0.5s ease;
+            z-index: 10;
+        }
+
+        .screen.active { opacity: 1; visibility: visible; z-index: 20; }
+
+        /* --- Intro Screen --- */
+        #intro-screen {
+            background-color: #000;
+            z-index: 100;
+        }
+        
+        .intro-text {
+            font-family: 'Dancing Script', cursive;
+            font-size: 4rem;
+            color: var(--primary);
+            text-shadow: 0 0 20px rgba(229, 9, 20, 0.6);
+            min-height: 100px;
+        }
+
+        .start-btn-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 50px;
+            opacity: 0; /* Hidden initially */
+        }
+
+        .btn-start {
+            background: var(--primary);
+            color: white;
+            padding: 15px 40px;
+            font-size: 1.5rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 0 20px rgba(229, 9, 20, 0.4);
+            transition: transform 0.2s, background 0.2s;
+        }
+        
+        .btn-start:hover {
+            transform: scale(1.05);
+            background: #ff1f2f;
+        }
+
+        /* --- Photo Gallery (Choice Screen) --- */
+        #choice-screen {
+            background: radial-gradient(circle at center, #1f1f1f, #000);
+            perspective: 1000px;
+        }
+
+        .gallery-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            /* Removed flex to allow absolute positioning */
+        }
+
+        .polaroid-stack {
+            position: absolute;
+            width: 250px;
+            height: 300px;
+            cursor: pointer;
+            transition: transform 0.3s, z-index 0s;
+            /* Initial random positions will be set by JS */
+        }
+
+        .polaroid-stack:hover {
+            transform: scale(1.05);
+            z-index: 50;
+        }
+
+        .polaroid {
+            background: white;
+            padding: 12px 12px 40px 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            width: 100%;
+            text-align: center;
+            position: absolute;
+            top: 0; left: 0;
+            transition: all 0.4s ease;
+            border: 1px solid #ddd;
+        }
+
+        /* Stack effect for the main gallery view */
+        .polaroid-stack .polaroid:nth-child(1) { transform: rotate(-5deg); z-index: 3; }
+        .polaroid-stack .polaroid:nth-child(2) { transform: rotate(3deg); z-index: 2; top: 5px; left: 5px;}
+        .polaroid-stack .polaroid:nth-child(3) { transform: rotate(-2deg); z-index: 1; top: 10px; left: -5px;}
+
+        .polaroid-stack:hover .polaroid:nth-child(1) { transform: rotate(-8deg) translate(-10px, -10px); }
+        .polaroid-stack:hover .polaroid:nth-child(2) { transform: rotate(6deg) translate(10px, -5px); }
+        .polaroid-stack:hover .polaroid:nth-child(3) { transform: rotate(-4deg) translate(0px, 10px); }
+
+        .polaroid-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background-color: #eee;
+        }
+        
+        .polaroid-caption {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.4rem;
+            color: #333;
+            margin-top: 10px;
+        }
+
+        /* --- Split Story Screen --- */
+        #story-screen {
+            background-size: cover;
+            background-position: center;
+            transition: background-image 0.5s ease;
+        }
+
+        #story-screen::before {
+            content: '';
+            position: absolute; top:0; left:0; width:100%; height:100%;
+            background: rgba(0,0,0,0.85); /* Darken background for readability */
+            backdrop-filter: blur(8px);
+        }
+
+        .story-layout {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            max-width: 1400px;
+            width: 95%;
+            z-index: 10;
+            padding: 20px;
+            height: 90vh; /* Fixed height for layout */
+        }
+
+        /* Multi-Frame Gallery in Detail View */
+        .story-gallery-grid {
+            flex: 1.5;
+            position: relative;
+            height: 100%;
+            /* Random scattered look */
+        }
+        
+        .mini-polaroid {
+            position: absolute;
+            background: white;
+            padding: 8px 8px 25px 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            width: 200px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+
+        .mini-polaroid:hover {
+            transform: scale(1.5) rotate(0deg) !important; /* Override random rotation on hover */
+            z-index: 1000 !important;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+        }
+
+        .mini-polaroid img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+
+        .story-text-container {
+            flex: 1;
+            color: var(--text-color);
+            padding: 30px;
+            background: rgba(0,0,0,0.4);
+            border-radius: 20px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,215,0,0.2);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .story-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3rem;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+        
+        .story-meta {
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            color: var(--primary);
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .story-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            min-height: 100px;
+        }
+
+        .btn-back {
+            padding: 10px 30px;
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+        .btn-back:hover { background: white; color: black; }
+
+        /* --- Proposal Screen --- */
+        #proposal-screen {
+            background: radial-gradient(circle, #2b0a12, #000);
+        }
+
+        .proposal-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            margin-bottom: 3rem;
+            background: linear-gradient(to right, #ff9a9e, #fad0c4);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        .btn-group {
+            position: relative;
+            height: 100px;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+        }
+
+        .btn-proposal {
+            padding: 15px 40px;
+            font-size: 1.5rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s;
+            position: relative;
+            z-index: 100;
+        }
+
+        .btn-yes {
+            background: linear-gradient(45deg, #e50914, #ff4b5c);
+            color: white;
+            box-shadow: 0 0 20px rgba(229, 9, 20, 0.5);
+            animation: pulse 2s infinite;
+        }
+
+        .btn-no {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        /* --- Celebration Screen (Parchment & Pen) --- */
+        #celebration-screen {
+            background: radial-gradient(circle, #4a154b, #000); /* Dark luxury */
+            overflow: hidden;
+        }
+
+        .parchment-container {
+            background: #fffcf9; /* Silk White */
+            width: clamp(300px, 90%, 800px);
+            max-height: 80vh;
+            padding: 3rem;
+            border-radius: 10px;
+            position: relative;
+            color: #2c1a1d;
+            box-shadow: 0 0 100px rgba(0,0,0,0.8);
+            transform: scale(0.9);
+            opacity: 0;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; /* Allow scroll if text is long */
+        }
+        
+        .parchment-container.visible {
+            opacity: 1; transform: scale(1);
+            transition: all 1s ease;
+        }
+
+        /* Parchment Decorations */
+        .parchment-container::before {
+            content: '';
+            position: absolute; top: 10px; left: 10px; right: 10px; bottom: 10px;
+            border: 2px solid #d4af37;
+            pointer-events: none;
+        }
+
+        .parch-dec {
+            position: absolute; width: 50px; height: 50px;
+            border: 2px solid #d4af37;
+            pointer-events: none;
+        }
+        .dec-tl { top: 0; left: 0; border-right: none; border-bottom: none; }
+        .dec-tr { top: 0; right: 0; border-left: none; border-bottom: none; }
+        .dec-bl { bottom: 0; left: 0; border-right: none; border-top: none; }
+        .dec-br { bottom: 0; right: 0; border-left: none; border-top: none; }
+
+        .victory-title {
+            font-family: 'Great Vibes', cursive;
+            font-size: 2.5rem;
+            color: #d4af37;
+            text-align: center;
+            margin-bottom: 2rem;
+            line-height: 1.2;
+        }
+
+        .letter-content {
+            font-family: 'Great Vibes', cursive;
+            font-size: 1.8rem;
+            line-height: 1.5;
+            color: #4a154b;
+        }
+
+        /* Pencil */
+        .pencil-cursor {
+            position: absolute;
+            font-size: 2.5rem;
+            pointer-events: none;
+            z-index: 1002;
+            display: none;
+            filter: drop-shadow(5px 5px 5px rgba(0,0,0,0.3));
+            transition: top 0.1s, left 0.1s;
+        }
+
+        .writing-active {
+            animation: pencilWrite 0.1s infinite alternate;
+        }
+
+        @keyframes pencilWrite {
+            0% { transform: rotate(0deg) translateY(0); }
+            100% { transform: rotate(15deg) translateY(-5px); }
+        }
+
+        /* Wax Seal */
+        .wax-seal {
+            position: absolute; bottom: 30px; right: 40px;
+            width: 70px; height: 70px;
+            background: #d4af37;
+            border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 2rem; color: #fff;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transform: rotate(-15deg);
+        }
+
+        /* Sparkles */
+        .real-sparkle {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 10px white, 0 0 20px gold;
+            animation: shimmer 2s infinite ease-in-out;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { transform: scale(0.2); opacity: 0; }
+            50% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 20px rgba(229, 9, 20, 0.5); }
+            50% { transform: scale(1.05); box-shadow: 0 0 30px rgba(229, 9, 20, 0.8); }
+        }
+
+        /* Audio Toggle */
+        .audio-toggle {
+            position: fixed; bottom: 20px; right: 20px;
+            background: rgba(255,255,255,0.1); color: white;
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 10px 15px; border-radius: 50%;
+            cursor: pointer; z-index: 1000;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .story-layout { flex-direction: column; gap: 2rem; height: auto; overflow-y: auto; }
+            .story-gallery-grid { width: 100%; height: 300px; }
+            .mini-polaroid { width: 140px; }
+            .intro-text { font-size: 2.5rem; }
+            .proposal-title { font-size: 2rem; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Audio -->
+    <button class="audio-toggle" onclick="toggleAudio()">🔇</button>
+    <audio id="bg-music" loop>
+        <source src="https://cdn.pixabay.com/download/audio/2022/11/22/audio_febc508520.mp3?filename=cinematic-documentary-piano-126686.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Background Galaxy -->
+    <div id="galaxy"></div>
+    <div id="sparkleZone"></div>
+
+    <!-- Scene 1: Intro -->
+    <div id="intro-screen" class="screen active">
+        <div class="intro-text"></div>
+        <div class="start-btn-container" id="startBtnContainer">
+            <button class="btn-start" onclick="playMovie()">Start Movie 🎬</button>
+        </div>
+    </div>
+
+    <!-- Scene 2: Gallery Choices -->
+    <div id="choice-screen" class="screen">
+        <h2 style="font-family: 'Dancing Script'; font-size: 3rem; color: var(--accent); margin-bottom: 3rem; text-shadow: 0 0 10px rgba(212,175,55,0.5);">Our Precious Memories</h2>
+        <div class="gallery-container">
+            <!-- Dynamic Injection Here -->
+        </div>
+    </div>
+
+    <!-- Scene 3: Story Details (Split View) -->
+    <div id="story-screen" class="screen">
+        <div class="story-layout">
+            <div class="story-gallery-grid" id="detail-gallery">
+                <!-- Mini Polaroids injected here randomly -->
+            </div>
+            
+            <div class="story-text-container">
+                <h1 class="story-title" id="detail-title">Title</h1>
+                <p class="story-meta" id="detail-meta">Date • Location</p>
+                <p class="story-text" id="detail-text">Story text goes here...</p>
+                <button class="btn-back" onclick="showChoices()">Back to Gallery</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scene 4: Proposal -->
+    <div id="proposal-screen" class="screen">
+        <h1 class="proposal-title">Will you write the rest of this story with me? 💖</h1>
+        <div class="btn-group">
+            <button class="btn-proposal btn-yes" onclick="acceptProposal()">YES 💍</button>
+            <button class="btn-proposal btn-no hover-dodge" onmouseover="dodgeButton(this)">NO 😏</button>
+        </div>
+    </div>
+
+    <!-- Scene 5: Celebration (Parchment) -->
+    <div id="celebration-screen" class="screen">
+        <div class="parchment-container" id="parchment">
+            <!-- Corners -->
+            <div class="parch-dec dec-tl"></div><div class="parch-dec dec-tr"></div>
+            <div class="parch-dec dec-bl"></div><div class="parch-dec dec-br"></div>
+            
+            <h1 class="victory-title">“And just like that… our forever begins.”</h1>
+            
+            <div class="letter-content" id="typewriter"></div>
+            
+            <div class="wax-seal">❤️</div>
+            <div class="pencil-cursor" id="pencil">🖋️</div>
+        </div>
+    </div>
+
+    <script>
+        // --- Rich Story Data (Expanded) ---
+        const stories = [
+            {
+                id: 0,
+                title: "The Spark ✨",
+                date: "February 14, 2023",
+                location: "Coffee Shop",
+                text: "It started with a simple glance across the room. Neither of us knew that moment would change everything. The world faded away, and for the first time, I just knew.",
+                gallery: [
+                    { img: "https://images.unsplash.com/photo-1511988617509-a57c8a288659?w=600&auto=format&fit=crop&q=60", caption: "That Look" },
+                    { img: "https://images.unsplash.com/photo-1522673607200-1645062cd6d4?w=600&auto=format&fit=crop&q=60", caption: "First Smile" },
+                    { img: "https://images.unsplash.com/photo-1497935586351-b67a49e012bf?w=600&auto=format&fit=crop&q=60", caption: "Coffee Date" },
+                    { img: "https://images.unsplash.com/photo-1507643179173-61b03995657e?w=600&auto=format&fit=crop&q=60", caption: "Shy Hello" },
+                    { img: "https://images.unsplash.com/photo-1512486130939-2c4f79935e4f?w=600&auto=format&fit=crop&q=60", caption: "Butterflies" }
+                ]
+            },
+            {
+                id: 1,
+                title: "The Adventure 🌍",
+                date: "July 20, 2023",
+                location: "Mountains",
+                text: "Remember getting lost on that trail? We laughed until our sides hurt. That was the day I realized I didn't care where we were going, as long as I was with you.",
+                gallery: [
+                    { img: "https://images.unsplash.com/photo-1516589178581-a78c85de899e?w=600&auto=format&fit=crop&q=60", caption: "The Peak" },
+                    { img: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=600&auto=format&fit=crop&q=60", caption: "Lost & Found" },
+                    { img: "https://images.unsplash.com/photo-1504609773096-104ff10587a2?w=600&auto=format&fit=crop&q=60", caption: "Campfire" },
+                    { img: "https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?w=600&auto=format&fit=crop&q=60", caption: "Star Gaze" },
+                    { img: "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=600&auto=format&fit=crop&q=60", caption: "Sunrise" }
+                ]
+            },
+            {
+                id: 2,
+                title: "The Magic 🦋",
+                date: "December 31, 2023",
+                location: "Rooftop Party",
+                text: "Watching the fireworks reflect in your eyes was better than the show itself. In that chaos of celebration, you were my only peace.",
+                gallery: [
+                    { img: "https://images.unsplash.com/photo-1514525253440-b393452eeb25?w=600&auto=format&fit=crop&q=60", caption: "Midnight" },
+                    { img: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=600&auto=format&fit=crop&q=60", caption: "The Dance" },
+                    { img: "https://images.unsplash.com/photo-1533174072545-e8d4aa97edf9?w=600&auto=format&fit=crop&q=60", caption: "Sparklers" },
+                    { img: "https://images.unsplash.com/photo-1519671482538-518b48d19474?w=600&auto=format&fit=crop&q=60", caption: "Cheers" },
+                    { img: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=600&auto=format&fit=crop&q=60", caption: "Glow" }
+                ]
+            },
+            {
+                id: 3,
+                title: "The Future ♾️",
+                date: "Today & Forever",
+                location: "Our Hearts",
+                text: "This frame is still being painted. It's waiting for our next chapter, our next home, and our forever. Let's make it beautiful.",
+                gallery: [
+                    { img: "https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=600&auto=format&fit=crop&q=60", caption: "Us" },
+                    { img: "https://images.unsplash.com/photo-1621600411688-4be93cd68504?w=600&auto=format&fit=crop&q=60", caption: "Dream Home" },
+                    { img: "https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?w=600&auto=format&fit=crop&q=60", caption: "Together" },
+                    { img: "https://images.unsplash.com/photo-1606041008023-472dfb5e530f?w=600&auto=format&fit=crop&q=60", caption: "Goals" },
+                    { img: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=600&auto=format&fit=crop&q=60", caption: "Forever" }
+                ],
+                isFuture: true
+            }
+        ];
+
+        // --- State ---
+        let audioPlaying = false;
+        const bgMusic = document.getElementById('bg-music');
+        
+        // --- Init ---
+        window.onload = () => {
+             createGalaxy();
+             animateIntroText();
+             renderGalleryChoices();
+        };
+
+        // --- Render Gallery Choices (Stacked Polaroids) ---
+        function renderGalleryChoices() {
+            const container = document.querySelector('.gallery-container');
+            container.innerHTML = '';
+            
+            // Define safe zones or just use constrained random to prevent edge clipping
+            stories.forEach((s, index) => {
+                const stack = document.createElement('div');
+                stack.className = 'polaroid-stack';
+                stack.onclick = () => loadStory(index);
+                
+                // Random Layout Logic
+                // Keep within 10% - 70% width/height to avoid going off-screen
+                const rLeft = Math.floor(Math.random() * 60) + 10; 
+                const rTop = Math.floor(Math.random() * 50) + 15; // Start a bit lower to avoid title
+                const rRot = Math.floor(Math.random() * 40) - 20;
+
+                stack.style.left = rLeft + '%';
+                stack.style.top = rTop + '%';
+                stack.style.transform = `rotate(${rRot}deg)`;
+                
+                // Create a few frames for the stack visual
+                s.gallery.forEach((pic, i) => {
+                    if (i > 2) return; // Limit stack visual
+                    const card = document.createElement('div');
+                    card.className = 'polaroid';
+                    // Fallback handled via onerror
+                    card.innerHTML = `<img src="${pic.img}" class="polaroid-img" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=600&auto=format&fit=crop&q=60';">`;
+                    if (i === 0) { // Caption only on top card
+                        card.innerHTML += `<div class="polaroid-caption">${s.title}</div>`; 
+                    }
+                    stack.appendChild(card);
+                });
+
+                container.appendChild(stack);
+            });
+        }
+
+        // --- Audio ---
+        function toggleAudio() {
+            if(!audioPlaying) {
+                bgMusic.play().then(() => {
+                    audioPlaying = true;
+                    document.querySelector('.audio-toggle').textContent = "🔊";
+                }).catch(() => {});
+            } else {
+                bgMusic.pause();
+                audioPlaying = false;
+                document.querySelector('.audio-toggle').textContent = "🔇";
+            }
+        }
+
+        // --- Intro Logic ---
+        function animateIntroText() {
+            const textEl = document.querySelector('.intro-text');
+            const tl = gsap.timeline();
+
+            tl.to(textEl, { duration: 1, text: "A Ravi Production", ease: "none", delay: 0.5 })
+              .to(textEl, { opacity: 0, delay: 1.5, duration: 1 })
+              .to(textEl, { duration: 0, text: "" })
+              .to(textEl, { opacity: 1, duration: 0.5 })
+              .to(textEl, { duration: 1.5, text: "Our Story", ease: "none" })
+              .to(textEl, { opacity: 1, duration: 0.5, onComplete: () => {
+                  gsap.to('#startBtnContainer', { opacity: 1, duration: 1 });
+              }});
+        }
+
+        function playMovie() {
+            toggleAudio(); // Start music on interaction
+            switchScreen('intro-screen', 'choice-screen');
+            animateGalleryEntry();
+        }
+
+        // --- Navigation ---
+        function switchScreen(fromId, toId) {
+            const fromEl = document.getElementById(fromId);
+            const toEl = document.getElementById(toId);
+            
+            gsap.to(fromEl, { opacity: 0, duration: 0.5, onComplete: () => {
+                fromEl.classList.remove('active');
+                toEl.classList.add('active');
+                gsap.fromTo(toEl, { opacity: 0, scale: 0.95 }, { opacity: 1, scale: 1, duration: 0.8 });
+            }});
+        }
+
+        function animateGalleryEntry() {
+            gsap.from(".polaroid-stack", { y: 100, opacity: 0, duration: 0.8, stagger: 0.15, rotate: 0, ease: "back.out(1.7)" });
+        }
+
+        function loadStory(index) {
+            const data = stories[index];
+            
+            if(data.isFuture) {
+                switchScreen('choice-screen', 'proposal-screen');
+                return;
+            }
+
+            // Populate Detail Screen Text
+            document.getElementById('detail-title').innerText = data.title;
+            document.getElementById('detail-meta').innerText = `${data.date} • ${data.location}`;
+            document.getElementById('detail-text').innerText = ""; 
+            
+            // Populate Detail Gallery (Scattered Layout)
+            const detailGallery = document.getElementById('detail-gallery');
+            detailGallery.innerHTML = '';
+            
+            data.gallery.forEach((pic, i) => {
+                const div = document.createElement('div');
+                div.className = 'mini-polaroid';
+                
+                // Random Scattering
+                const randRot = (Math.random() - 0.5) * 40; // -20 to 20 deg
+                const randX = (Math.random() * 60) - 10; // 0% to 60%
+                const randY = (Math.random() * 60); // 0% to 60%
+                
+                div.style.left = `${randX}%`;
+                div.style.top = `${randY}%`;
+                div.style.transform = `rotate(${randRot}deg)`;
+                // Invert stacking: First image (index 0) has highest z-index
+                div.style.zIndex = data.gallery.length - i;
+
+                div.innerHTML = `
+                    <img src="${pic.img}" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=600&auto=format&fit=crop&q=60';">
+                    <div style="font-family:'Dancing Script'; text-align:center; padding-top:5px; color:#555;">${pic.caption}</div>
+                `;
+                detailGallery.appendChild(div);
+            });
+
+            // Set Background Blur to the first image
+            document.getElementById('story-screen').style.backgroundImage = `url('${data.gallery[0].img}')`;
+
+            switchScreen('choice-screen', 'story-screen');
+            
+            // Text Animation
+            gsap.from(".mini-polaroid", { scale: 0, opacity: 0, duration: 0.8, stagger: 0.1, ease: "back.out(1.5)" });
+            gsap.from(".story-text-container", { x: 50, opacity: 0, duration: 1, delay: 0.5 });
+            
+            setTimeout(() => {
+                gsap.to('#detail-text', { text: { value: data.text, delimiter: "" }, duration: 3, ease: "none" });
+            }, 1000);
+        }
+
+        function showChoices() { switchScreen('story-screen', 'choice-screen'); }
+
+        // --- Proposal Logic ---
+        function dodgeButton(btn) {
+            const msgs = ["Nice Try! 😈", "Click Yes! 💖", "Error 404 💔", "Nope! 💨"];
+            const x = (Math.random() - 0.5) * 300;
+            const y = (Math.random() - 0.5) * 300;
+            
+            gsap.to(btn, { x: x, y: y, duration: 0.2 });
+            btn.innerText = msgs[Math.floor(Math.random() * msgs.length)];
+        }
+
+        function acceptProposal() {
+            switchScreen('proposal-screen', 'celebration-screen');
+            
+            // Confetti
+            confetti({ particleCount: 150, spread: 100, origin: { y: 0.6 } });
+            setInterval(() => {
+                confetti({ particleCount: 30, spread: 60, origin: { x: Math.random(), y: Math.random() - 0.2 } });
+            }, 800);
+
+            // Show Parchment
+            setTimeout(() => {
+                document.getElementById('parchment').classList.add('visible');
+                startTypewriting();
+                createSparkles();
+            }, 1000);
+        }
+
+        // --- Pen Typing Logic ---
+        function startTypewriting() {
+            const text = "My Dearest Love...\n\nFrom fresh coffee to mountain peaks, every memory adds a color to my world that wasn't there before. You are my greatest adventure and my quietest peace.\n\nThank you for choosing me. I promise to cherish every laugh, wipe away every tear, and love you through every season of life.\n\nYou are my today and all of my tomorrows.\n\nForever Yours, ❤️";
+            const container = document.getElementById('typewriter');
+            const pencil = document.getElementById('pencil');
+            let i = 0;
+            
+            pencil.style.display = 'block';
+            pencil.classList.add('writing-active');
+
+            function updatePencil() {
+                const tempSpan = document.createElement('span');
+                tempSpan.innerHTML = 'I'; 
+                tempSpan.style.visibility = 'hidden';
+                container.appendChild(tempSpan);
+                
+                const rect = tempSpan.getBoundingClientRect();
+                const containerRect = container.parentElement.getBoundingClientRect();
+                
+                // Fine-tune offset for accuracy
+                pencil.style.left = (rect.left - containerRect.left + 5) + 'px';
+                pencil.style.top = (rect.bottom - containerRect.top - 40) + 'px';
+                
+                container.removeChild(tempSpan);
+            }
+
+            function type() {
+                if (i < text.length) {
+                    const char = text.charAt(i);
+                    container.innerHTML += (char === '\n') ? '<br>' : char;
+                    updatePencil();
+                    i++;
+                    setTimeout(type, 50);
+                } else {
+                    pencil.classList.remove('writing-active');
+                    gsap.to(pencil, { opacity: 0, duration: 1, onComplete: () => pencil.style.display = 'none' });
+                }
+            }
+            type();
+        }
+
+        // --- Decorations ---
+        function createGalaxy() {
+            const galaxy = document.getElementById('galaxy');
+            for(let i=0; i<30; i++) {
+                const h = document.createElement('div');
+                h.innerText = '❤';
+                h.className = 'floating-heart';
+                h.style.left = Math.random() * 100 + 'vw';
+                h.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                h.style.fontSize = (Math.random() * 20 + 10) + 'px';
+                galaxy.appendChild(h);
+            }
+        }
+
+        function createSparkles() {
+            const zone = document.getElementById('sparkleZone');
+            for(let i=0; i<50; i++) {
+                const s = document.createElement('div');
+                s.className = 'real-sparkle';
+                s.style.left = Math.random() * 100 + '%';
+                s.style.top = Math.random() * 100 + '%';
+                let size = Math.random() * 10 + 2;
+                s.style.width = size + 'px'; height = size + 'px';
+                s.style.animationDelay = Math.random() * 5 + 's';
+                zone.appendChild(s);
+            }
+        }
+    </script>
+</body>
+</html>
