@@ -45,22 +45,20 @@
             width: 100%;
             overflow: hidden !important; 
             touch-action: manipulation;
-        }
+        } 
 
         body {
             font-family: 'Montserrat', sans-serif;
             font-weight: 300;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            /* Block Display - NO Flex/Centering */
+            display: block; 
+            padding-top: 0; /* STRICT TOP ALIGNMENT (0px) */
+            margin: 0;
             background: var(--bg-gradient);
             position: relative;
             color: var(--silk-white);
-            
-            /* High-End Decorative Border */
-            border: 20px solid transparent;
-            border-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160' %3E%3Cpath d='M40,40 Q80,0 120,40 Q160,80 120,120 Q80,160 40,120 Q0,80 40,40' fill='%23d4af37' fill-opacity='0.1'/%3E%3Cpath d='M20,20 L140,140 M140,20 L20,140' stroke='%23e2b49a' stroke-width='0.5' stroke-opacity='0.4'/%3E%3Ccircle cx='80' cy='80' r='3' fill='%23d4af37'/%3E%3C/svg%3E") 60 round;
-        }
+            border: none;
+            overflow-y: auto;        }
 
         @media (max-width: 768px) {
             body { border: none; }
@@ -92,20 +90,38 @@
         }
         
         /* Immersive Content - No Containers! */
+        /* Immersive Content - Strict Top Alignment */
         .immersive-view {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            max-width: 600px;
+            margin: 0; /* No margin */
+            padding: 0; /* No padding */
             text-align: center;
             z-index: 10;
-            position: relative;
-            max-width: 900px;
-            padding: 2rem;
-            width: 100%;
+            left: 50%;
+            transform: translateX(-50%);
         }
 
         .main-image {
-            width: clamp(140px, 30vw, 180px);
-            height: clamp(140px, 30vw, 180px);
-            margin: 0 auto 2rem auto;
-            filter: drop-shadow(0 20px 40px rgba(0,0,0,0.15));
+            width: 85vw; /* GLOBAL HUGE SIZE */
+            height: 85vw;
+            max-width: 500px;
+            max-height: 500px;
+            margin: 0 auto 5px auto;
+            /* Sticker Mode: No border, just the character */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .main-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; 
+            filter: drop-shadow(0 0 15px rgba(255,255,255,0.2));
         }
 
         /* Start Entrance - Minimalist & Luxury */
@@ -260,6 +276,56 @@
             height: 100%;
             pointer-events: none;
             overflow: hidden;
+        }
+
+        /* Small Screen / Landscape Mobile Optimizations */
+        @media (max-width: 480px), (max-height: 700px) {
+            .immersive-view {
+                padding: 1rem;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                height: 100%; /* Force full height usage */
+                overflow-y: auto; /* Allow scroll if really needed */
+            }
+
+            .main-image {
+                width: clamp(100px, 25vh, 140px);
+                height: clamp(100px, 25vh, 140px);
+                margin: 0 auto 1rem auto;
+            }
+
+            /* Greeting GIF smaller */
+            .immersive-view > div:nth-child(2) {
+                width: 80px !important;
+                height: 80px !important;
+                margin-bottom: 5px !important;
+            }
+
+            h1 {
+                font-size: clamp(2rem, 6vh, 3rem);
+                margin-bottom: 1vh;
+            }
+
+            .subtitle {
+                font-size: clamp(0.9rem, 3vw, 1.1rem);
+                margin-bottom: 1.5rem;
+            }
+
+            .btn {
+                padding: 12px 25px;
+                font-size: 1rem;
+            }
+            
+            .btn-group { gap: 10px; }
+        }
+
+        /* Landscape specific to fit vertical */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .immersive-view { padding: 0.5rem; }
+            .main-image { display: none; } /* Hide large image to fit content */
+            h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+            .subtitle { margin-bottom: 1rem; }
         }
 
         .parchment-container {
@@ -521,6 +587,68 @@
             100% { transform: rotate(15deg) translateY(-5px); }
         }
 
+        /* COMPREHENSIVE MOBILE OVERRIDES - "STICK TO TOP" */
+        @media (max-width: 768px) {
+            body {
+                display: block !important; /* Disable flex centering */
+                overflow-x: hidden;
+                overflow-y: auto; /* Allow scrolling if needed */
+                height: 100%;
+                padding-top: 0 !important;
+            }
+
+            .immersive-view {
+                position: relative !important; /* Stack naturally from top */
+                top: 0 !important;
+                left: 0 !important;
+                transform: none !important;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 10px 10px 40px 10px !important; /* Small top padding, space at bottom */
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: flex-start;
+                height: auto;
+                min-height: 100vh;
+            }
+
+            .main-image {
+                width: 85vw !important; /* BIG GIF as requested */
+                height: 85vw !important;
+                max-width: 350px;
+                max-height: 350px;
+                margin: 0 auto 10px auto !important;
+            }
+            
+            /* Greeting GIF hidden/smaller to save space for the BIG bear */
+            .immersive-view > div:nth-child(2) {
+                width: 60px !important;
+                height: 60px !important;
+                margin-bottom: 5px !important;
+            }
+
+            h1 {
+                font-size: clamp(2.2rem, 7vh, 3.5rem) !important;
+                margin-bottom: 5px !important;
+                line-height: 1.0 !important;
+            }
+
+            .subtitle {
+                font-size: 1rem !important;
+                margin-bottom: 20px !important;
+            }
+            
+            .btn-group {
+                gap: 15px !important;
+                padding-bottom: 20px;
+            }
+            
+            .btn {
+                 font-size: 1.2rem !important;
+                 padding: 15px 30px !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -539,12 +667,12 @@
 
     <div class="immersive-view" id="mainSection">
         <div class="main-image">
-            <img id="bearImg" src="https://media.tenor.com/syS6m6493_IAAAAi/mocha.gif" style="width: 100%; height: 100%; object-fit: contain;">
+            <img id="bearImg" src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExYzRzNHZwdW54YnpqdDlwdW54YnpqdDlwdW54YnpqdDlwdW54YiZlcD12MV9zdGlja2Vyc19zZWFyY2gmY3Q9cw/MDJ9IbxxvDUQM/giphy.gif" style="width: 100%; height: 100%; object-fit: contain;">
         </div>
         
         <!-- Teddy Bears Greeting GIF -->
         <div style="width: 120px; height: 120px; margin: 0 auto 10px;">
-            <img src="https://media.tenor.com/S5r9g12_a8IAAAAi/milk-and-mocha-bear-couple.gif" style="width: 100%; height: 100%; object-fit: contain;">
+            <img src="assets/wake-up.gif" style="width: 100%; height: 100%; object-fit: contain;">
         </div>
         
         <h1>Will you be my Valentine? 💍</h1>
@@ -621,29 +749,43 @@
         let stage = 0;
 
         function moveNo(e) {
-            // Prevent default touch behavior (double-tap zoom, etc.) but allow scrolling elsewhere
-            if(e && e.type === 'touchstart') {
-                e.preventDefault(); 
+            // Stop any default touch actions
+            if (e) {
+                if (e.cancelable) e.preventDefault();
+                e.stopPropagation();
             }
 
-            // Relocate to body to escape any parent transforms that break fixed positioning
+            // Relocate to body to escape any parent transforms
             if (noBtn.parentElement !== document.body) {
                 document.body.appendChild(noBtn);
             }
 
-            // Update text first for size measurement
+            // Update text
             noBtn.innerText = rejectionStages[stage % rejectionStages.length];
             
-            // Safe bounds with margin to account for overshoot transitions
-            const margin = Math.min(20, window.innerWidth * 0.05);
+            // Get Button Size (force layout update)
             const btnW = noBtn.offsetWidth || 100;
             const btnH = noBtn.offsetHeight || 50;
 
-            const maxX = Math.max(margin, window.innerWidth - btnW - margin);
-            const maxY = Math.max(margin, window.innerHeight - btnH - margin);
-            
-            const x = Math.random() * (maxX - margin) + margin;
-            const y = Math.random() * (maxY - margin) + margin;
+            // Viewport Dimensions
+            const vw = window.innerWidth;
+            const vh = window.innerHeight;
+
+            // Safe Margins (keep button away from edges)
+            const padding = 20;
+
+            // Calculate Max Positions
+            const maxX = vw - btnW - padding;
+            const maxY = vh - btnH - padding;
+
+            // Generate Random Position
+            // Ensure minimum is padding
+            let x = Math.max(padding, Math.random() * maxX);
+            let y = Math.max(padding, Math.random() * maxY);
+
+            // Constraint Check (Extra Safety)
+            x = Math.min(x, vw - btnW - padding);
+            y = Math.min(y, vh - btnH - padding);
             
             noBtn.style.position = 'fixed';
             noBtn.style.left = x + 'px';
