@@ -19,6 +19,8 @@
     <!-- Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- Razorpay SDK (kept for potential payment, but not used directly now) -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
     <style>
         :root {
@@ -50,21 +52,17 @@
         body {
             font-family: 'Montserrat', sans-serif;
             font-weight: 300;
-            /* Block Display - NO Flex/Centering */
             display: block; 
-            padding-top: 0; /* STRICT TOP ALIGNMENT (0px) */
+            padding-top: 0;
             margin: 0;
             background: var(--bg-gradient);
             position: relative;
             color: var(--silk-white);
             border: none;
-            overflow-y: auto;        }
-
-        @media (max-width: 768px) {
-            body { border: none; }
+            overflow-y: auto;
         }
 
-        /* Floating Galaxy Background */
+        /* Floating Galaxy Background (kept subtle) */
         #galaxy {
             position: fixed;
             top: 0;
@@ -89,41 +87,27 @@
             to { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
         }
         
-        /* Immersive Content - No Containers! */
         /* Immersive Content - Strict Top Alignment */
+        /* Immersive Content - Perfect Center */
         .immersive-view {
             position: absolute;
-            top: 0;
-            left: 0;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             width: 100%;
             max-width: 600px;
-            margin: 0; /* No margin */
-            padding: 0; /* No padding */
+            margin: 0;
+            padding: 0;
             text-align: center;
             z-index: 10;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        .main-image {
-            width: 85vw; /* GLOBAL HUGE SIZE */
-            height: 85vw;
-            max-width: 500px;
-            max-height: 500px;
-            margin: 0 auto 5px auto;
-            /* Sticker Mode: No border, just the character */
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
         }
-        
-        .main-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain; 
-            filter: drop-shadow(0 0 15px rgba(255,255,255,0.2));
-        }
 
+        /* Legacy Main Image Styles Removed */
+        
         /* Start Entrance - Minimalist & Luxury */
         #startOverlay {
             position: fixed;
@@ -168,9 +152,9 @@
         }
 
         h1 {
-            font-family: 'Great Vibes', cursive; /* Elegant Cursive for Proposal */
+            font-family: 'Great Vibes', cursive;
             font-weight: 400;
-            font-size: clamp(2.5rem, 9vw, 5rem); /* Responsive fluid font */
+            font-size: clamp(2.5rem, 9vw, 5rem);
             color: var(--rose-gold-light);
             margin-bottom: 2vh;
             text-shadow: 0 5px 25px rgba(212, 175, 55, 0.4);
@@ -231,8 +215,8 @@
         }
 
         .btn-no {
-            background: rgba(255, 205, 210, 0.3); /* Soft Petal Red */
-            color: #e3d7d7; /* Soft Harmony Red - More Elegant */
+            background: rgba(255, 205, 210, 0.3);
+            color: #e3d7d7;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(183, 28, 28, 0.2);
             touch-action: none;
@@ -251,7 +235,7 @@
             justify-content: center;
             align-items: center;
             flex-direction: column;
-            overflow: hidden; /* Zero Scroll Requirement */
+            overflow: hidden;
             padding: 2vh;
             border: none;
         }
@@ -264,7 +248,7 @@
             align-items: center;
             justify-content: center;
             width: 100%;
-            height: 100%; /* Fill viewport for centering */
+            height: 100%;
             max-width: 1200px;
         }
 
@@ -285,82 +269,60 @@
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
-                height: 100%; /* Force full height usage */
-                overflow-y: auto; /* Allow scroll if really needed */
+                height: 100%;
+                overflow-y: auto;
             }
-
-            .main-image {
-                width: clamp(100px, 25vh, 140px);
-                height: clamp(100px, 25vh, 140px);
-                margin: 0 auto 1rem auto;
-            }
-
-            /* Greeting GIF smaller */
-            .immersive-view > div:nth-child(2) {
-                width: 80px !important;
-                height: 80px !important;
-                margin-bottom: 5px !important;
-            }
-
             h1 {
                 font-size: clamp(2rem, 6vh, 3rem);
                 margin-bottom: 1vh;
             }
-
             .subtitle {
                 font-size: clamp(0.9rem, 3vw, 1.1rem);
                 margin-bottom: 1.5rem;
             }
-
             .btn {
                 padding: 12px 25px;
                 font-size: 1rem;
             }
-            
             .btn-group { gap: 10px; }
         }
 
-        /* Landscape specific to fit vertical */
+        /* Landscape specific */
         @media (max-height: 500px) and (orientation: landscape) {
             .immersive-view { padding: 0.5rem; }
-            .main-image { display: none; } /* Hide large image to fit content */
             h1 { font-size: 2rem; margin-bottom: 0.5rem; }
             .subtitle { margin-bottom: 1rem; }
         }
 
         .parchment-container {
-            background: #fffcf9; /* Silk White Vellum */
+            background: #fffcf9;
             width: clamp(300px, 90%, 1100px);
             height: auto;
             max-height: 80vh;
             padding: clamp(1.5rem, 4vh, 4rem);
-            border-radius: 15px; /* Softer luxury corners */
+            border-radius: 15px;
             position: relative;
             box-shadow: 0 40px 120px rgba(0,0,0,0.5), 0 0 40px rgba(212, 175, 55, 0.1);
             transform: scale(0.9);
             opacity: 0;
             transition: all 1.2s cubic-bezier(0.23, 1, 0.32, 1);
-            border: 3px solid var(--luxury-gold); /* Solid Luxury Border */
-            outline: 1px solid rgba(212, 175, 55, 0.5); /* Shimmering Double Border */
+            border: 3px solid var(--luxury-gold);
+            outline: 1px solid rgba(212, 175, 55, 0.5);
             outline-offset: -12px;
-            overflow-y: auto; 
+            overflow-y: hidden; /* Hide scroll bars initially */
             display: flex;
             flex-direction: column;
+            align-items: center;
+            z-index: 2000; 
+            min-height: 150px; /* Start small */
+            transition: min-height 0.5s ease; /* Smooth growth if needed */
         }
         
-        @media (max-width: 480px) {
-            .parchment-container {
-                outline-offset: -6px;
-                padding: 1.5rem;
-            }
-            .parchment-container::after {
-                padding: 10px !important; 
-                background-size: 60px 15px, 60px 15px, 15px 60px, 15px 60px !important;
-            }
+        .parchment-container.visible { 
+            transform: scale(1) !important; 
+            opacity: 1 !important; 
+            visibility: visible !important;
         }
-
-        /* Custom scrollbar logic removed from box, global scroll on parent remains */
-        .parchment-container.visible { transform: scale(1); opacity: 1; }
 
         /* High-End Decorative Corner Ornaments */
         .parch-dec {
@@ -372,7 +334,6 @@
             opacity: 0.9;
             background-repeat: no-repeat;
             background-size: contain;
-            /* Extra Ornate SVG Corner Pattern */
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M10,10 Q50,0 90,10 Q100,50 90,90 Q50,100 10,90 Q0,50 10,10' fill='none' stroke='%23d4af37' stroke-width='2'/%3E%3Cpath d='M25,25 Q50,15 75,25 Q85,50 75,75 Q50,85 25,75 Q15,50 25,25' fill='none' stroke='%23d4af37' stroke-width='1' opacity='0.7'/%3E%3Cpath d='M10,10 C30,10 40,20 40,40 M90,10 C70,10 60,20 60,40 M10,90 C30,90 40,80 40,60 M90,90 C70,90 60,80 60,60' fill='none' stroke='%23d4af37' stroke-width='1.5'/%3E%3Cpath d='M40,40 Q50,30 60,40 Q70,50 60,60 Q50,70 40,60 Q30,50 40,40' fill='%23d4af37' opacity='0.4'/%3E%3Ccircle cx='50' cy='50' r='6' fill='none' stroke='%23d4af37' stroke-width='1.5'/%3E%3Cpath d='M50,44 L50,56 M44,50 L56,50' stroke='%23d4af37' stroke-width='1'/%3E%3C/svg%3E");
             filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.4));
         }
@@ -395,7 +356,6 @@
             box-shadow: inset 0 0 15px rgba(212, 175, 55, 0.1);
         }
 
-        /* Enhanced Border Artistry (Scrollwork & Floral Gap) */
         .parchment-container::after {
             content: '';
             position: absolute;
@@ -406,28 +366,21 @@
             pointer-events: none;
             z-index: 1;
             padding: 25px;
-            
-            /* Multi-layered Ornate Backgrounds */
             background: 
-                /* Top Edge: Ornate Scroll & Heart */
                 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='25' viewBox='0 0 100 25'%3E%3Cpath d='M0,20 C10,0 20,25 30,5 C40,25 50,0 60,20 C70,0 80,25 90,5 C100,25 110,0 120,20' fill='none' stroke='%23d4af37' stroke-width='0.8' opacity='0.6'/%3E%3Cpath d='M50,12 Q50,5 55,8 Q50,12 45,8 Q50,5 50,12' fill='%23d4af37' opacity='0.8'/%3E%3C/svg%3E") repeat-x top center,
-                /* Bottom Edge: Inverse Ornate Scroll */
                 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='25' viewBox='0 0 100 25'%3E%3Cpath d='M0,5 C10,25 20,0 30,20 C40,0 50,25 60,5 C70,25 80,0 90,20 C100,0 110,25 120,5' fill='none' stroke='%23d4af37' stroke-width='0.8' opacity='0.6'/%3E%3Cpath d='M50,13 Q50,20 55,17 Q50,13 45,17 Q50,20 50,13' fill='%23d4af37' opacity='0.8'/%3E%3C/svg%3E") repeat-x bottom center,
-                /* Left Edge: Vertical Vine */
                 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='25' height='100' viewBox='0 0 25 100'%3E%3Cpath d='M20,0 Q0,25 20,50 Q0,75 20,100' fill='none' stroke='%23d4af37' stroke-width='0.8' opacity='0.6'/%3E%3Ccircle cx='12' cy='50' r='2' fill='%23d4af37' opacity='0.7'/%3E%3C/svg%3E") repeat-y left center,
-                /* Right Edge: Vertical Inverse Vine */
                 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='25' height='100' viewBox='0 0 25 100'%3E%3Cpath d='M5,0 Q25,25 5,50 Q25,75 5,100' fill='none' stroke='%23d4af37' stroke-width='0.8' opacity='0.6'/%3E%3Ccircle cx='13' cy='50' r='2' fill='%23d4af37' opacity='0.7'/%3E%3C/svg%3E") repeat-y right center;
-            
             background-size: 100px 25px, 100px 25px, 25px 100px, 25px 100px;
         }
 
         .wax-seal {
             position: absolute;
-            bottom: 20px; /* Moved inside to avoid clipping */
+            bottom: 20px;
             right: 30px;
             width: clamp(50px, 15vw, 80px);
             height: clamp(50px, 15vw, 80px);
-            background: #d4af37; /* Luxury Gold/Yellow Seal */
+            background: #d4af37;
             border-radius: 50%;
             display: flex;
             justify-content: center;
@@ -454,7 +407,7 @@
 
         .letter-content {
             font-family: 'Great Vibes', cursive;
-            font-size: clamp(1.1rem, 4vw, 2rem); /* Fluid typography */
+            font-size: clamp(1.1rem, 4vw, 2rem);
             color: #4a342e;
             line-height: 1.3;
             text-align: left;
@@ -462,27 +415,16 @@
             padding-bottom: 20px;
         }
         
-        #typewriter {
-            width: 100%;
-            height: 100%;
-        }
-
-        /* Preloader & Overlay */
         #preloader, .overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             z-index: 10000;
-            /* Preloader & Overlay: Luxury Silk & Plum */
         }
         #preloader { 
-            background: #2a0a2b; /* Darker Plum for entrance */
+            background: #2a0a2b;
         }
         
-        .overlay { 
-            display: none; 
-        }
-
         #startOverlay h2 {
             font-family: 'Cinzel', serif;
             letter-spacing: 4px;
@@ -494,10 +436,10 @@
         .victory-title {
             font-family: 'Great Vibes', cursive;
             font-weight: 400;
-            font-size: clamp(1.5rem, 6vw, 4rem); /* Responsive Font */
+            font-size: clamp(1.5rem, 6vw, 4rem);
             letter-spacing: normal;
             text-transform: none;
-            margin-bottom: 2vh; /* Responsive margin */
+            margin-bottom: 2vh;
             background: linear-gradient(to bottom, #d4af37 0%, #f7e7ce 50%, #e2b49a 100%);
             -webkit-background-clip: text;
             background-clip: text;
@@ -511,16 +453,6 @@
             text-align: center;
         }
 
-        .victory-title::after {
-            content: '“And just like that… our forever begins.”';
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: -1;
-            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.2);
-            filter: blur(2px);
-        }
-
         @keyframes victoryFloat {
             0%, 100% { transform: translateY(0) scale(1.0); }
             50% { transform: translateY(-20px) scale(1.05); }
@@ -530,13 +462,13 @@
             position: absolute;
             background: white;
             border-radius: 50%;
-            box-shadow: 0 0 10px white, 0 0 20px var(--gold);
+            box-shadow: 0 0 10px white, 0 0 20px var(--luxury-gold);
             animation: shimmer 2s infinite ease-in-out;
         }
 
         @keyframes shimmer {
             0%, 100% { transform: scale(0.5); opacity: 0.3; }
-            50% { transform: scale(1.2); opacity: 1; box-shadow: 0 0 15px white, 0 0 25px var(--gold); }
+            50% { transform: scale(1.2); opacity: 1; box-shadow: 0 0 15px white, 0 0 25px var(--luxury-gold); }
         }
 
         /* Music Toggle Button */
@@ -587,71 +519,176 @@
             100% { transform: rotate(15deg) translateY(-5px); }
         }
 
-        /* COMPREHENSIVE MOBILE OVERRIDES - "STICK TO TOP" */
-        @media (max-width: 768px) {
-            body {
-                display: block !important; /* Disable flex centering */
-                overflow-x: hidden;
-                overflow-y: auto; /* Allow scrolling if needed */
-                height: 100%;
-                padding-top: 0 !important;
-            }
-
-            .immersive-view {
-                position: relative !important; /* Stack naturally from top */
-                top: 0 !important;
-                left: 0 !important;
-                transform: none !important;
-                width: 100% !important;
-                margin: 0 !important;
-                padding: 10px 10px 40px 10px !important; /* Small top padding, space at bottom */
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: flex-start;
-                height: auto;
-                min-height: 100vh;
-            }
-
-            .main-image {
-                width: 85vw !important; /* BIG GIF as requested */
-                height: 85vw !important;
-                max-width: 350px;
-                max-height: 350px;
-                margin: 0 auto 10px auto !important;
-            }
-            
-            /* Greeting GIF hidden/smaller to save space for the BIG bear */
-            .immersive-view > div:nth-child(2) {
-                width: 60px !important;
-                height: 60px !important;
-                margin-bottom: 5px !important;
-            }
-
-            h1 {
-                font-size: clamp(2.2rem, 7vh, 3.5rem) !important;
-                margin-bottom: 5px !important;
-                line-height: 1.0 !important;
-            }
-
-            .subtitle {
-                font-size: 1rem !important;
-                margin-bottom: 20px !important;
-            }
-            
-            .btn-group {
-                gap: 15px !important;
-                padding-bottom: 20px;
-            }
-            
-            .btn {
-                 font-size: 1.2rem !important;
-                 padding: 15px 30px !important;
-            }
+        /* Name Form Overlay */
+        /* Name Form Overlay - Solid Background to prevent reflection */
+        #nameFormOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #2a0a2b; /* Solid Deep Plum - NO TRANSPARENCY */
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10001;
+            opacity: 0;
+            transition: opacity 0.8s ease;
         }
+
+        .decorated-form-container {
+            background: rgba(0, 0, 0, 0.6); /* Darker container background */
+            padding: clamp(40px, 6vh, 60px);
+            border-radius: 25px;
+            border: 2px solid var(--luxury-gold); /* Thicker Gold Border */
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.2), 0 20px 60px rgba(0,0,0,0.6);
+            text-align: center;
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+            overflow: hidden;
+            animation: formFloat 6s ease-in-out infinite;
+        }
+        
+        @keyframes formFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .form-title {
+            font-family: 'Great Vibes', cursive;
+            font-size: clamp(2.5rem, 6vw, 4.5rem); /* Slightly adjusted for single line */
+            color: var(--rose-gold-light);
+            margin-bottom: 10px;
+            text-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+            white-space: nowrap; /* Force Single Line */
+        }
+
+        .form-subtitle {
+            font-family: 'Great Vibes', cursive; /* Cursive as requested */
+            font-size: clamp(1.5rem, 4vw, 2.2rem);
+            color: #e2b49a;
+            margin-bottom: 30px;
+            letter-spacing: 1px;
+            text-transform: none; /* Formatting: Normal casing */
+        }
+
+        #loverNameInput {
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid var(--luxury-gold);
+            width: 100%;
+            font-family: 'Cinzel', serif;
+            font-size: clamp(1.5rem, 5vw, 2rem);
+            color: var(--silk-white);
+            text-align: center;
+            padding: 10px;
+            margin-bottom: 40px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        #loverNameInput:focus {
+            border-bottom-color: var(--rose-gold-light);
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+        
+        #loverNameInput::placeholder {
+            color: rgba(255, 252, 249, 0.3);
+        }
+
+        .btn-name-submit {
+            background: linear-gradient(135deg, #d4af37 0%, #e2b49a 100%);
+            color: #4a154b;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-name-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(212, 175, 55, 0.5);
+        }
+        
+        /* Proposal Card for Better Visibility */
+        .proposal-card {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+            padding: 25px;
+            border-radius: 25px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            margin: 10px auto;
+            width: 95%;
+            max-width: 500px;
+            animation: floatUpCard 1s ease-out;
+        }
+
+        @keyframes floatUpCard {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Floating GIFs container - STRICTLY AROUND EDGES ONLY */
+        .floating-gifs-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5; /* below text which is z-index 10 */
+            overflow: hidden;
+        }
+
+        .floating-gif {
+            position: absolute;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            opacity: 0.6;
+            filter: drop-shadow(0 0 10px rgba(255,215,0,0.3));
+            max-width: 100px; /* smaller size */
+            animation: gentleDrift 15s infinite ease-in-out;
+        }
+
+        @keyframes gentleDrift {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(10px, 15px) rotate(5deg); }
+            66% { transform: translate(-5px, 8px) rotate(-3deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+
+        /* Edge positioning classes */
+        .gif-top { top: 5px; }
+        .gif-bottom { bottom: 5px; }
+        .gif-left { left: 5px; }
+        .gif-right { right: 5px; }
+        .gif-top-left { top: 5px; left: 5px; }
+        .gif-top-right { top: 5px; right: 5px; }
+        .gif-bottom-left { bottom: 5px; left: 5px; }
+        .gif-bottom-right { bottom: 5px; right: 5px; }
+
+        /* REMOVED logout button completely */
+        /* Payment modal styles kept minimal but not shown */
+        #paymentModal { display: none; } /* Hidden by default */
     </style>
 </head>
 <body>
+
+    <!-- Floating GIFs container - ONLY AROUND EDGES -->
+    <div class="floating-gifs-container" id="floatingGifContainer"></div>
 
     <div id="galaxy"></div>
 
@@ -660,42 +697,41 @@
         <p style="font-family: 'Great Vibes'; font-size: 3rem; color: #ff4d6d; margin-top: 20px;">Creating your fairy tale... ✨🌹</p>
     </div>
 
-    <div id="startOverlay">
-        <h2 style="font-family: 'Great Vibes'; font-size: clamp(3rem, 10vh, 5.5rem); margin-bottom: 20px; text-align: center;">A Royal Invitation... 🏹💌</h2>
-        <button class="btn-surprise" id="startBtn">Surprise 🎁✨</button>
+    <!-- Name Form Overlay -->
+    <div id="nameFormOverlay">
+        <div class="decorated-form-container">
+            <h2 class="form-title">Who is the lucky one? 🌹</h2>
+            <p class="form-subtitle">Enter your name, my love...</p>
+            <input type="text" id="loverNameInput" placeholder="Your Name" autocomplete="off">
+            <button class="btn-name-submit" id="submitNameBtn">Continue ✨</button>
+            <div class="floating-sparkles"></div>
+        </div>
     </div>
+    
 
+
+    <!-- Main proposal section -->
     <div class="immersive-view" id="mainSection">
-        <div class="main-image">
-            <img id="bearImg" src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExYzRzNHZwdW54YnpqdDlwdW54YnpqdDlwdW54YnpqdDlwdW54YiZlcD12MV9zdGlja2Vyc19zZWFyY2gmY3Q9cw/MDJ9IbxxvDUQM/giphy.gif" style="width: 100%; height: 100%; object-fit: contain;">
-        </div>
+        <h1 style="white-space: nowrap; margin-top: 15vh; position: relative; z-index: 10;">Will you be my Valentine? 💍</h1>
+        <p class="subtitle" style="position: relative; z-index: 10;">You make my heart go boom-boom! </p>
         
-        <!-- Teddy Bears Greeting GIF -->
-        <div style="width: 120px; height: 120px; margin: 0 auto 10px;">
-            <img src="assets/wake-up.gif" style="width: 100%; height: 100%; object-fit: contain;">
-        </div>
-        
-        <h1>Will you be my Valentine? 💍</h1>
-        <p class="subtitle">You make my heart go boom-boom! </p>
-        
-        <div class="btn-group">
+        <div class="btn-group" style="position: relative; z-index: 10;">
             <button class="btn btn-yes" id="yesBtn">Accept 💖</button>
             <button class="btn btn-no" id="noBtn">Reject 😢</button>
         </div>
     </div>
 
+    <!-- Success State (after yes) -->
     <div id="successState">
         <div id="sparkleZone"></div>
         <div class="success-content">
             <h1 class="victory-title">💍 “And just like that… our forever begins.” 💍</h1>
              <div class="parchment-container" id="parchment">
-                <!-- Ornate Corner Elements -->
                 <div class="parch-dec dec-tl"></div>
                 <div class="parch-dec dec-tr"></div>
                 <div class="parch-dec dec-bl"></div>
                 <div class="parch-dec dec-br"></div>
                 
-                <!-- Success GIF - Milk & Mocha Celebration -->
                 <img src="https://media.tenor.com/S5r9g12_a8IAAAAi/milk-and-mocha-bear-couple.gif" 
                      style="width: 150px; height: 150px; position: absolute; top: -110px; left: 50%; transform: translateX(-50%); z-index: 1001; filter: drop-shadow(0 0 10px rgba(212,175,55,0.4));">
                 
@@ -703,8 +739,28 @@
                 <div class="pencil-cursor" id="pencil">🖋️</div>
                 <div class="wax-seal"></div>
             </div>
+            
+            <!-- Create/Share Button (kept for fun) -->
+            <button class="btn-name-submit" id="createOwnBtn" style="margin-top: 30px; position: relative; z-index: 1002;">✨ Create Your Own & Share ✨</button>
         </div>
     </div>
+
+    <!-- Payment Modal (hidden initially, but kept for structure) -->
+    <div id="paymentModal">
+        <div class="payment-card">
+            <div class="close-modal" id="closePayment">×</div>
+            <h2 style="font-family: 'Great Vibes'; font-size: 2.5rem; margin-bottom: 10px;">Share the Love! 💖</h2>
+            <p style="font-family: 'Montserrat';">Get your own customizable link to send to <b>YOUR</b> Valentine!</p>
+            <div class="price-tag">$4.99</div>
+            <p style="font-size: 0.9rem; color: #666; margin-bottom: 20px;">
+                Includes: <br>• Custom Name <br>• Your Photos <br>• Forever Hosting
+            </p>
+            <button class="btn-name-submit" id="payNowBtn" style="width: 100%;">Unlock Now 🔓</button>
+            <p id="paymentStatus" style="margin-top: 15px; font-weight: bold; height: 20px;"></p>
+        </div>
+    </div>
+    
+    <!-- NO LOGOUT BUTTON - removed entirely -->
 
     <audio id="bgMusic" loop>
         <source src="assets/music.mp3" type="audio/mpeg">
@@ -713,10 +769,215 @@
     <div id="musicToggle" title="Toggle Music">🎵</div>
 
     <script>
-        const music = document.getElementById('bgMusic');
+        // --- GLOBAL FUNCTIONS ---
+        function startPreloader() {
+            setTimeout(() => {
+                const preloader = document.getElementById('preloader');
+                if(preloader) preloader.style.display = 'none';
+                
+                const nameForm = document.getElementById('nameFormOverlay');
+                if(nameForm) {
+                    nameForm.style.display = 'flex';
+                    setTimeout(() => nameForm.style.opacity = '1', 50); 
+                }
+            }, 2000);
+        }
+
+        // No login overlay, so start preloader after small delay
+        setTimeout(() => {
+            startPreloader();
+        }, 100);
+
+        // --- FLOATING BEARS CONFIGURATION (Strictly around edges, no repeats) ---
+        const bearGifs = [
+            "assets/hug-couple.gif",
+            "assets/love.gif",
+            "https://media.giphy.com/media/l4pTfx2qLszoacZRS/giphy.gif",
+            "assets/love1.gif",
+            "assets/wake-up.gif",
+            "assets/ac004f45b32743f8cf6b794da93ac091.gif"
+        ];
+
+        function createFloatingBears() {
+            const container = document.getElementById('floatingGifContainer');
+            if (!container) return;
+            container.innerHTML = ''; // clear any existing
+
+            // Edge positions array (all around the border, not inside)
+            const edgePositions = [
+                'gif-top-left', 'gif-top', 'gif-top-right',
+                'gif-right', 'gif-bottom-right', 'gif-bottom', 
+                'gif-bottom-left', 'gif-left'
+            ];
+            
+            // Track last used GIF to avoid consecutive repeats
+            let lastGifIndex = -1;
+            
+            // Create exactly one GIF per edge position (8 total)
+            edgePositions.forEach((positionClass, index) => {
+                // Select a random GIF that's NOT the same as the last one
+                let randomIndex;
+                do {
+                    randomIndex = Math.floor(Math.random() * bearGifs.length);
+                } while (randomIndex === lastGifIndex && bearGifs.length > 1);
+                
+                lastGifIndex = randomIndex;
+                
+                const img = document.createElement('img');
+                img.src = bearGifs[randomIndex];
+                img.classList.add('floating-gif', positionClass);
+                
+                // Random size between 60px and 100px
+                const size = 60 + Math.random() * 40;
+                img.style.width = size + 'px';
+                
+                // Slight offset from edge for variety
+                if (positionClass.includes('top')) {
+                    img.style.top = (5 + Math.random() * 15) + 'px';
+                }
+                if (positionClass.includes('bottom')) {
+                    img.style.bottom = (5 + Math.random() * 15) + 'px';
+                }
+                if (positionClass.includes('left')) {
+                    img.style.left = (5 + Math.random() * 15) + 'px';
+                }
+                if (positionClass.includes('right')) {
+                    img.style.right = (5 + Math.random() * 15) + 'px';
+                }
+                
+                // For pure top/bottom/left/right (without left/right combo), adjust
+                if (positionClass === 'gif-top') {
+                    img.style.left = (10 + Math.random() * 70) + '%'; // spread across top
+                    img.style.right = 'auto';
+                }
+                if (positionClass === 'gif-bottom') {
+                    img.style.left = (10 + Math.random() * 70) + '%';
+                    img.style.right = 'auto';
+                }
+                if (positionClass === 'gif-left') {
+                    img.style.top = (10 + Math.random() * 70) + '%';
+                    img.style.bottom = 'auto';
+                }
+                if (positionClass === 'gif-right') {
+                    img.style.top = (10 + Math.random() * 70) + '%';
+                    img.style.bottom = 'auto';
+                }
+                
+                // Random animation duration for variety
+                const duration = 12 + Math.random() * 10;
+                img.style.animation = `gentleDrift ${duration}s infinite ease-in-out`;
+                
+                container.appendChild(img);
+            });
+            
+            // Add a few more random edge GIFs but ensure no consecutive repeats
+            const extraCount = 4; // total will be 12 GIFs
+            for (let i = 0; i < extraCount; i++) {
+                let randomIndex;
+                do {
+                    randomIndex = Math.floor(Math.random() * bearGifs.length);
+                } while (randomIndex === lastGifIndex && bearGifs.length > 1);
+                
+                lastGifIndex = randomIndex;
+                
+                const img = document.createElement('img');
+                img.src = bearGifs[randomIndex];
+                img.classList.add('floating-gif');
+                
+                // Randomly assign to one of the four edges but not corners
+                const edgeType = Math.floor(Math.random() * 4); // 0:top,1:right,2:bottom,3:left
+                
+                switch(edgeType) {
+                    case 0: // top
+                        img.style.top = (5 + Math.random() * 20) + 'px';
+                        img.style.left = (5 + Math.random() * 85) + '%';
+                        break;
+                    case 1: // right
+                        img.style.right = (5 + Math.random() * 20) + 'px';
+                        img.style.top = (5 + Math.random() * 85) + '%';
+                        break;
+                    case 2: // bottom
+                        img.style.bottom = (5 + Math.random() * 20) + 'px';
+                        img.style.left = (5 + Math.random() * 85) + '%';
+                        break;
+                    case 3: // left
+                        img.style.left = (5 + Math.random() * 20) + 'px';
+                        img.style.top = (5 + Math.random() * 85) + '%';
+                        break;
+                }
+                
+                const size = 50 + Math.random() * 40;
+                img.style.width = size + 'px';
+                
+                const duration = 10 + Math.random() * 15;
+                img.style.animation = `gentleDrift ${duration}s infinite ease-in-out`;
+                
+                container.appendChild(img);
+            }
+        }
+
+        // Call it on load
+        createFloatingBears();
+
+        // --- Name Form Logic ---
+        let loverName = "";
+        const nameInput = document.getElementById('loverNameInput');
+        const submitNameBtn = document.getElementById('submitNameBtn');
+        const nameFormOverlay = document.getElementById('nameFormOverlay');
+        const startOverlay = document.getElementById('startOverlay');
+
+        async function saveToDB(name) {
+            console.log("Saving to DB:", name);
+            localStorage.setItem('valve_lover_name', name);
+            await new Promise(r => setTimeout(r, 800));
+            return true;
+        }
+
+        async function submitName() {
+            const name = nameInput.value.trim();
+            if (name) {
+                submitNameBtn.innerText = "Connecting... 🔄";
+                submitNameBtn.style.opacity = "0.8";
+                
+                await saveToDB(name);
+                loverName = name;
+                
+                submitNameBtn.innerText = "Connected! ✅";
+                setTimeout(() => {
+                    nameFormOverlay.style.opacity = '0';
+                    setTimeout(() => {
+                        nameFormOverlay.style.display = 'none';
+                        
+                        // Direct Transition to Main Section
+                        const main = document.getElementById('mainSection');
+                        main.style.display = 'flex'; 
+                        gsap.from("#mainSection > *", { duration: 1.5, y: 100, opacity: 0, stagger: 0.3, ease: "power4.out" });
+
+                        // Start Music & Assets
+                        const music = document.getElementById('bgMusic');
+                        music.volume = 0.5;
+                        music.play().catch(e => console.log("Audio play failed (interaction needed):", e));
+                        
+                        // Scatter GIFs if function exists
+                        if (typeof scatterAssets === 'function') scatterAssets();
+
+                    }, 800);
+                }, 1000);
+            } else {
+                nameInput.style.transform = "translateX(10px)";
+                setTimeout(() => nameInput.style.transform = "translateX(-10px)", 100);
+                setTimeout(() => nameInput.style.transform = "translateX(0)", 200);
+                nameInput.focus();
+            }
+        }
+
+        submitNameBtn.addEventListener('click', submitName);
+        nameInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') submitName();
+        });
+
+        // Galaxy floating hearts (existing)
         const galaxy = document.getElementById('galaxy');
-        
-        // Create Floating Galaxy
         for(let i=0; i<40; i++) {
             const h = document.createElement('div');
             h.innerHTML = Math.random() > 0.5 ? '💞' : '💝';
@@ -728,20 +989,8 @@
             galaxy.appendChild(h);
         }
 
-        // Preloader Logic
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                document.getElementById('preloader').style.display = 'none';
-                document.getElementById('startOverlay').style.display = 'flex';
-            }, 2000);
-        });
+        // Audio & start
 
-        // Audio Unlock
-        document.getElementById('startBtn').addEventListener('click', () => {
-            music.play().then(() => music.pause()); 
-            document.getElementById('startOverlay').style.display = 'none';
-            gsap.from("#mainSection > *", { duration: 1.5, y: 100, opacity: 0, stagger: 0.3, ease: "power4.out" });
-        });
 
         const noBtn = document.getElementById('noBtn');
         const yesBtn = document.getElementById('yesBtn');
@@ -749,41 +998,28 @@
         let stage = 0;
 
         function moveNo(e) {
-            // Stop any default touch actions
             if (e) {
                 if (e.cancelable) e.preventDefault();
                 e.stopPropagation();
             }
 
-            // Relocate to body to escape any parent transforms
             if (noBtn.parentElement !== document.body) {
                 document.body.appendChild(noBtn);
             }
 
-            // Update text
             noBtn.innerText = rejectionStages[stage % rejectionStages.length];
             
-            // Get Button Size (force layout update)
             const btnW = noBtn.offsetWidth || 100;
             const btnH = noBtn.offsetHeight || 50;
-
-            // Viewport Dimensions
             const vw = window.innerWidth;
             const vh = window.innerHeight;
-
-            // Safe Margins (keep button away from edges)
             const padding = 20;
-
-            // Calculate Max Positions
             const maxX = vw - btnW - padding;
             const maxY = vh - btnH - padding;
 
-            // Generate Random Position
-            // Ensure minimum is padding
             let x = Math.max(padding, Math.random() * maxX);
             let y = Math.max(padding, Math.random() * maxY);
 
-            // Constraint Check (Extra Safety)
             x = Math.min(x, vw - btnW - padding);
             y = Math.min(y, vh - btnH - padding);
             
@@ -802,34 +1038,40 @@
         noBtn.addEventListener('touchstart', moveNo, {passive: false});
 
         yesBtn.addEventListener('click', () => {
-            noBtn.style.display = 'none'; // Ensure dodge button disappears
-            if (noBtn.parentNode) noBtn.parentNode.removeChild(noBtn); // Clean removal
+            // 1. Hide Proposal Elements
+            noBtn.style.display = 'none'; 
+            if (noBtn.parentNode) noBtn.parentNode.removeChild(noBtn);
             
-            document.body.style.border = 'none';
             document.getElementById('mainSection').style.display = 'none';
-            document.getElementById('successState').style.display = 'flex';
+            document.body.style.overflow = 'hidden'; // Prevent scrolling
+
+            // 2. Show Success State
+            const successState = document.getElementById('successState');
+            successState.style.display = 'flex';
+            successState.style.opacity = '1';
             
-            // Robust Music Playback
+            // 3. Play Music
             music.currentTime = 0;
             music.volume = 0.6;
-            const playPromise = music.play();
-            if (playPromise !== undefined) {
-                playPromise.catch(error => {
-                    console.log("Playback was prevented. Showing music toggle.");
-                    const toggle = document.getElementById('musicToggle');
-                    toggle.style.animation = "pumpingHeart 1.5s infinite";
-                    toggle.style.background = "rgba(212, 175, 55, 0.6)";
-                });
-            }
-            
-            // Victory Title Entrance
-            gsap.from(".victory-title", { duration: 1.5, y: -100, opacity: 0, scale: 0.5, ease: "elastic.out(1, 0.5)" });
+            music.play().catch(e => console.log("Audio play failed:", e));
 
+            // 4. Animate Title
+            gsap.fromTo(".victory-title", 
+                { y: -50, opacity: 0, scale: 0.8 },
+                { duration: 1.2, y: 0, opacity: 1, scale: 1, ease: "back.out(1.7)" }
+            );
+
+            // 5. Show Parchment & Start Typing (Slight delay for effect)
             setTimeout(() => {
-                document.getElementById('parchment').classList.add('visible');
+                const parchment = document.getElementById('parchment');
+                parchment.style.opacity = '1'; // Force opacity
+                parchment.style.transform = 'scale(1)'; // Force scale
+                parchment.classList.add('visible');
+                
                 startTypewriting();
-            }, 800);
+            }, 500);
             
+            // 6. Celebration Effects
             confetti({
                 particleCount: 300, spread: 100, origin: { y: 0.6 },
                 colors: ['#ff4d6d', '#ffd700', '#ffffff']
@@ -840,11 +1082,11 @@
                     particleCount: 40, spread: 70, origin: { x: Math.random(), y: Math.random() - 0.2 },
                     colors: ['#ff4d6d', '#ffd700'], shapes: ['star']
                 });
-            }, 1000);
+            }, 2000);
 
-            // Create Real Background Sparkles (Behind the Letter)
+            // 7. Extra Sparkles
             const zone = document.getElementById('sparkleZone');
-            for (let i = 0; i < 200; i++) {
+            for (let i = 0; i < 50; i++) {
                 const s = document.createElement('div');
                 s.className = 'real-sparkle';
                 const size = Math.random() * 4 + 2;
@@ -859,7 +1101,8 @@
         });
 
         function startTypewriting() {
-            const text = `My Dearest Love...\n\nFrom the moment you entered my life, every heartbeat found its rhythm and every dream found its destination. You are not just my love; you are my greatest adventure and my quietest peace. ✨\n\nYour smile is my daily sunrise, and your heart is my forever home. In your eyes, I see a thousand lifetimes I want to spend by your side. Every laugh we share is a melody I want to play on repeat forever. 🌹\n\nThank you for choosing me. I promise to cherish every heartbeat, every laugh, and every dream we share from this day forward. Together, we will build a world where love is our only language and happiness is our only law.\n\nYou are my today and all of my tomorrows. 💍\n\nForever Yours, ❤️`;
+            const recipient = loverName ? loverName : "My Love";
+            const text = `My Dearest ${recipient}...\n\nFrom the moment you entered my life, every heartbeat found its rhythm and every dream found its destination. You are not just my love; you are my greatest adventure and my quietest peace. ✨\n\nYour smile is my daily sunrise, and your heart is my forever home. In your eyes, I see a thousand lifetimes I want to spend by your side. Every laugh we share is a melody I want to play on repeat forever. 🌹\n\nThank you for choosing me. I promise to cherish every heartbeat, every laugh, and every dream we share from this day forward. Together, we will build a world where love is our only language and happiness is our only law.\n\nYou are my today and all of my tomorrows. 💍\n\nForever Yours, ❤️`;
             const container = document.getElementById('typewriter');
             const pencil = document.getElementById('pencil');
             let i = 0;
@@ -868,24 +1111,15 @@
             pencil.classList.add('writing-active');
 
             function updatePencilPosition() {
-                // Use a temporary span to find the exact coordinates of the last character
                 const tempSpan = document.createElement('span');
-                tempSpan.innerHTML = 'I'; // Measure with a placeholder
+                tempSpan.innerHTML = 'I'; 
                 tempSpan.style.visibility = 'hidden';
                 container.appendChild(tempSpan);
                 
                 const rect = tempSpan.getBoundingClientRect();
                 const containerRect = container.parentElement.getBoundingClientRect();
                 
-                // Position pencil relative to its offset parent, ACCOUNTING FOR SCROLL
-                // Pencil is absolute inside parchment. 
-                // Parchment scrolls. Pencil should move with scroll? No, pencil is absolute inside parchment-container which is flex column?
-                // Wait, pencil is inside parchment-container. if parchment-container scrolls, pencil scrolls with it.
-                // We need pencil to be at the character position.
-                // The character position relative to the container TOPBORDER is:
-                // rect.top - containerRect.top + container.scrollTop
-                
-                const relativeTop = rect.top - containerRect.top + container.scrollTop;
+                const relativeTop = rect.top - containerRect.top + container.parentElement.scrollTop;
                 const relativeLeft = rect.left - containerRect.left;
 
                 pencil.style.left = (relativeLeft + 5) + 'px';
@@ -906,12 +1140,11 @@
                     updatePencilPosition();
                     i++;
                     
-                    // Auto-scroll logic
-                    if (container.scrollHeight > container.clientHeight) {
-                        container.scrollTop = container.scrollHeight;
+                    if (container.parentElement.scrollHeight > container.parentElement.clientHeight) {
+                        container.parentElement.scrollTop = container.parentElement.scrollHeight;
                     }
 
-                    setTimeout(type, 50); // Natural typing speed
+                    setTimeout(type, 50); 
                 } else {
                     pencil.classList.remove('writing-active');
                     gsap.to(pencil, { opacity: 0, duration: 1, delay: 1, onComplete: () => pencil.style.display = 'none' });
@@ -920,7 +1153,6 @@
             type();
         }
 
-        // Music Toggle Logic
         const musicToggle = document.getElementById('musicToggle');
         musicToggle.addEventListener('click', () => {
             if (music.paused) {
@@ -931,6 +1163,22 @@
                 music.pause();
                 musicToggle.innerText = '🔇';
             }
+        });
+
+        // Dummy handlers for createOwnBtn (payment modal not shown, but we keep basic)
+        const createBtn = document.getElementById('createOwnBtn');
+        const paymentModal = document.getElementById('paymentModal');
+        const closePayment = document.getElementById('closePayment');
+        const payNowBtn = document.getElementById('payNowBtn');
+        const status = document.getElementById('paymentStatus');
+
+        createBtn.addEventListener('click', () => {
+            confetti({ particleCount: 50, spread: 50, origin: { y: 0.5 } });
+            alert("✨ Share the love! (Demo)");
+        });
+
+        closePayment.addEventListener('click', () => {
+             paymentModal.style.display = 'none';
         });
     </script>
 </body>
